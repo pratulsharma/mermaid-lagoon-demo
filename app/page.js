@@ -106,6 +106,7 @@ export default function Home() {
   const [waiver, setWaiver] = useState({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
   const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -157,7 +158,7 @@ export default function Home() {
       {videoOpen && <div className="video-modal-backdrop" role="dialog" aria-modal="true" aria-label="Watch the magic" onClick={() => setVideoOpen(false)}>
         <div className="video-modal-inner" onClick={e => e.stopPropagation()}>
           <button className="video-modal-close" type="button" aria-label="Close video" onClick={() => setVideoOpen(false)}>✕</button>
-          <video className="video-modal-player" autoPlay controls playsInline>
+          <video className="video-modal-player" autoPlay controls playsInline muted>
             <source src="/videos/cinematic-vertical-reel.mp4" type="video/mp4" />
           </video>
         </div>
@@ -195,7 +196,7 @@ export default function Home() {
         <nav className="nav container">
           <a className="brand brand-wordmark" href="#top" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
             <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-            <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" />
+            <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
             <a href="#experience">Why us?</a><a href="#packages">Packages</a><a href="#reels">Reels</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/admin/login" style={{fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit'}}>⚙️</a>
@@ -204,7 +205,22 @@ export default function Home() {
               <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
             </div>
           </div>
+          <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </nav>
+        <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+          <a href="#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+          <a href="#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
+          <a href="#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
+          <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+          <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
+          <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+          <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
+          <a href="tel:+15551234567">📞 (555) 123-4567</a>
+        </div>
       </header>
 
       <section className="hero" id="top">
@@ -271,7 +287,7 @@ export default function Home() {
       <section className="section reel-section" id="reels"><div className="container">
         <div className="section-heading"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">Demo reels</p><h2>See the lagoon come to life.</h2></div>
         <div className="reel-grid" style={{marginBottom: '80px'}}>
-          <figure><video controls playsInline preload="metadata" poster="/images/lagoon-kids.png"><source src="/videos/use_the_inflatable_pool_make.mp4" type="video/mp4" /></video><figcaption>Backyard lagoon experience</figcaption></figure>
+            <figure><video controls playsInline preload="metadata" poster="/images/lagoon-kids.png" muted><source src="/videos/use_the_inflatable_pool_make.mp4" type="video/mp4" /></video><figcaption>Backyard lagoon experience</figcaption></figure>
         </div>
       </div></section>
       )}

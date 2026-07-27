@@ -10,6 +10,7 @@ export default function FAQ() {
     phone: '',
     message: ''
   });
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -102,7 +103,7 @@ export default function FAQ() {
         <nav className="nav container">
           <a className="brand brand-wordmark" href="/#top" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
             <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-            <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" />
+                      <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
             <a href="/#experience">Why us?</a>
@@ -116,7 +117,22 @@ export default function FAQ() {
             <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
             <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
           </div>
+                  <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                  </button>
         </nav>
+              <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+                  <a href="/#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+                  <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
+                  <a href="/#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
+                  <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+                  <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
+                  <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+                  <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
+                  <a href="tel:+15551234567">📞 (555) 123-4567</a>
+              </div>
       </header>
 
   

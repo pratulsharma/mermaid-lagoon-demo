@@ -6,6 +6,7 @@ export default function Gallery() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -31,7 +32,7 @@ export default function Gallery() {
         <nav className="nav container">
           <a className="brand brand-wordmark" href="/#top" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
             <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-            <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" />
+                      <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
             <a href="/#experience">Why us?</a>
@@ -45,7 +46,22 @@ export default function Gallery() {
             <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
             <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
           </div>
+                  <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                  </button>
         </nav>
+              <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+                  <a href="/#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+                  <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
+                  <a href="/#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
+                  <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+                  <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
+                  <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+                  <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
+                  <a href="tel:+15551234567">📞 (555) 123-4567</a>
+              </div>
       </header>
 
    
@@ -61,7 +77,7 @@ export default function Gallery() {
             {videos.map(video => (
               <div key={video.id} style={{cursor: 'pointer'}} onClick={() => setSelectedVideo(video)}>
                 <figure style={{margin: 0, overflow: 'hidden', borderRadius: '16px'}}>
-                  <video style={{width: '100%', height: 'auto', display: 'block', background: '#f0f0f0'}} poster={video.poster} controls playsInline preload="metadata">
+                        <video style={{ width: '100%', height: 'auto', display: 'block', background: '#f0f0f0' }} poster={video.poster} controls playsInline preload="metadata" muted>
                     <source src={video.src} type="video/mp4" />
                   </video>
                   <figcaption style={{padding: '16px', textAlign: 'center', color: '#073d63', fontWeight: '500'}}>{video.title}</figcaption>
@@ -113,7 +129,7 @@ export default function Gallery() {
         <div className="video-modal-backdrop" onClick={() => setSelectedVideo(null)}>
           <div className="video-modal-inner" onClick={e => e.stopPropagation()}>
             <button className="video-modal-close" type="button" onClick={() => setSelectedVideo(null)}>✕</button>
-            <video className="video-modal-player" autoPlay controls playsInline>
+                      <video className="video-modal-player" autoPlay controls playsInline muted>
               <source src={selectedVideo.src} type="video/mp4" />
             </video>
           </div>
