@@ -561,7 +561,7 @@ export default function Home() {
           <div className="hero-copy">
             <p className="eyebrow">California's magical mobile lagoon experience</p>
             <h1>{settings.content.heroTitle}<br /><span style={{color: '#2191a5'}}>Become a mermaid.</span></h1>
-            <p class="hero-text">A premium inflatable lagoon, shimmering mermaid tails, immersive décor and effortless setup—delivered to backyards, schools, hotels and special events.</p>
+            <p className="hero-text">A premium inflatable lagoon, shimmering mermaid tails, immersive décor and effortless setup—delivered to backyards, schools, hotels and special events.</p>
             <div className="hero-actions"><a href="#booking" className="button primary" onClick={(e) => { e.preventDefault(); setBookingOpen(true); }}>Plan my party</a><button type="button" className="button secondary" onClick={() => setVideoOpen(true)}>Watch the magic</button></div>
           </div>
           <div className="hero-art"><img src="/images/lagoon-kids.png" alt="Children enjoying the Mermaidalay inflatable lagoon" /></div>
