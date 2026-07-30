@@ -93,6 +93,8 @@ export default function Home() {
   const [videoOpen, setVideoOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [serviceArea, setServiceArea] = useState('san-jose');
+  const [previewDay, setPreviewDay] = useState('');
+  const [previewTime, setPreviewTime] = useState('');
   const [waiverOpen, setWaiverOpen] = useState(false);
   const [waiverSigned, setWaiverSigned] = useState(false);
   const [signature, setSignature] = useState('');
@@ -101,10 +103,13 @@ export default function Home() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bookingStep, setBookingStep] = useState('form'); // 'form', 'waiver', 'payment', 'success'
-  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventCity: '' });
+  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventTime: '', eventCity: '' });
   const [paymentInfo, setPaymentInfo] = useState({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // Get minimum date (today) for date picker
+  const minDate = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   // Check if user has visited before (client-side only, after hydration)
   useEffect(() => {
@@ -185,10 +190,19 @@ export default function Home() {
 
   const proceedToWaiver = () => {
     // Validate booking form fields
-    if (!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventCity) {
-      alert('Please fill in all required fields');
+    if (!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventTime || !bookingDetails.eventCity) {
+      alert('Please fill in all required fields.');
       return;
     }
+    
+    // Validate date is not in the past
+    const selectedDate = new Date(bookingDetails.eventDate + 'T' + bookingDetails.eventTime);
+    const now = new Date();
+    if (selectedDate < now) {
+      alert('Please select a future date and time.');
+      return;
+    }
+    
     // Pre-fill waiver with booking details
     setWaiver({ ...waiver, name: bookingDetails.name, email: bookingDetails.email, eventDate: bookingDetails.eventDate });
     setBookingStep('waiver');
@@ -257,16 +271,17 @@ export default function Home() {
             </div>
             <div className="booking-modal-content">
               <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-              <fieldset><legend>2. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="modal-package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
-              <fieldset><legend>3. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" name={`modal-addon-${index}`} checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
+              <fieldset><legend>2. Choose day</legend><div><input type="date" min={minDate} value={bookingDetails.eventDate} onChange={(e) => setBookingDetails({ ...bookingDetails, eventDate: e.target.value })} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+              <fieldset><legend>3. Choose time</legend><div><input type="time" value={bookingDetails.eventTime} onChange={(e) => setBookingDetails({ ...bookingDetails, eventTime: e.target.value })} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+              <fieldset><legend>4. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="modal-package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
+              <fieldset><legend>5. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" name={`modal-addon-${index}`} checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
               <div className="contact-fields">
                 <label>Name *<input type="text" placeholder="Your name" value={bookingDetails.name} onChange={(e) => setBookingDetails({ ...bookingDetails, name: e.target.value })} /></label>
                 <label>Email *<input type="email" placeholder="you@example.com" value={bookingDetails.email} onChange={(e) => setBookingDetails({ ...bookingDetails, email: e.target.value })} /></label>
-                <label>Event date *<input type="date" value={bookingDetails.eventDate} onChange={(e) => setBookingDetails({ ...bookingDetails, eventDate: e.target.value })} /></label>
                 <label>Event city *<input type="text" placeholder="Fremont, CA" value={bookingDetails.eventCity} onChange={(e) => setBookingDetails({ ...bookingDetails, eventCity: e.target.value })} /></label>
               </div>
               <div className="estimate-card"><span>Estimated total</span><strong>${total.toLocaleString()}</strong></div>
-              <button type="button" className="button primary full" onClick={proceedToWaiver} disabled={!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventCity}>Continue to Waiver</button>
+              <button type="button" className="button primary full" onClick={proceedToWaiver} disabled={!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventTime || !bookingDetails.eventCity}>Continue to Waiver</button>
             </div>
           </>}
 
@@ -348,7 +363,7 @@ export default function Home() {
                 <h3>Booking Confirmed</h3>
                 <div style={{ textAlign: 'left', background: '#f9f9f9', padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
                   <p><strong>Package:</strong> {packages[selectedPackage].name}</p>
-                  <p><strong>Date:</strong> {bookingDetails.eventDate}</p>
+                  <p><strong>Date & Time:</strong> {bookingDetails.eventDate} at {bookingDetails.eventTime}</p>
                   <p><strong>Location:</strong> {bookingDetails.eventCity}</p>
                   <p><strong>Total Paid:</strong> ${total.toLocaleString()}</p>
                 </div>
@@ -380,7 +395,10 @@ export default function Home() {
             <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
-            <a href="#top">Home</a><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="#service-areas">Locations</a><a href="/about">About</a><a href="/faq">FAQ</a>
+            <a href="#top">Home</a><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="#service-areas">Locations</a><a href="/about">About</a>
+            <a href="/contact">Contact</a><a href="/faq">FAQ</a>
+            <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{ padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap' }}>Book Now</button>
+            <a href="/admin/login" style={{ fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit' }}>⚙️</a>
             <div className="search-container" style={{ position: 'relative' }}>
               <input
                 type="search"
@@ -454,9 +472,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <a href="/contact">Contact Us</a>
-            <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
-            <a href="/admin/login" style={{ fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit' }}>⚙️</a>
           </div>
           <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
             <span></span>
@@ -564,8 +579,8 @@ export default function Home() {
           </div>
           <div style={{position: 'relative', zIndex: 1}}>
             <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>1. Choose Location</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>2. Choose Day</legend><div><input type="date" style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>3. Choose Time</legend><div><input type="time" style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>2. Choose Day</legend><div><input type="date" min={minDate} value={previewDay} onChange={(e) => setPreviewDay(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>3. Choose Time</legend><div><input type="time" value={previewTime} onChange={(e) => setPreviewTime(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
             <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>4. Choose Lagoon</legend><div className="choice-list"><label className="choice selected"><input type="radio" name="lagoon" checked readOnly /><span><strong>Coral Cove</strong><small>Currently active</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Sirens Cove</strong><small>Coming soon</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Atlantis</strong><small>Coming soon</small></span></label></div></fieldset>
             <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>5. Choose Package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
             <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>Add Extra Magic</legend><div className="choice-list compact">{addOns.map((item, index) => {
@@ -574,7 +589,15 @@ export default function Home() {
               const link = item[2];
               return <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}{link ? ' 🔗' : ''}</strong><small>+${price}</small></span></label>;
             })}</div></fieldset>
-            <button type="button" className="button primary full" onClick={() => setBookingOpen(true)}>Continue to Booking →</button>
+            <button type="button" className="button primary full" onClick={() => {
+              // Pre-fill modal with preview values
+              setBookingDetails({
+                ...bookingDetails,
+                eventDate: previewDay,
+                eventTime: previewTime
+              });
+              setBookingOpen(true);
+            }}>Continue to Booking →</button>
           </div>
         </div>
       </div></section>
