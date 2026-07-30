@@ -600,7 +600,7 @@ export default function Home() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: '24px',
-                padding: '48px 32px',
+                padding: '40px 28px',
                 border: `3px solid ${item.color}`,
                 boxShadow: `0 8px 32px ${item.color}40, inset 0 1px 0 rgba(255,255,255,0.5)`,
                 textAlign: 'center',
@@ -609,7 +609,7 @@ export default function Home() {
                 overflow: 'visible',
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: '650px'
+                height: '560px'
               }}
               onClick={() => { setSelectedPackage(index); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'}
@@ -619,7 +619,7 @@ export default function Home() {
               <div style={{
                 position: 'absolute',
                 inset: 0,
-                background: `linear-gradient(135deg, ${item.bgColor} 0%, rgba(255,240,248,0.92) 100%)`,
+                background: `linear-gradient(135deg, ${item.bgColor} 0%, rgba(255,240,248,0.96) 100%)`,
                 backdropFilter: 'blur(1px)',
                 borderRadius: '24px',
                 zIndex: 0
@@ -632,24 +632,25 @@ export default function Home() {
               {/* Title */}
               <h3 style={{
                 fontFamily: 'var(--font-fredoka)',
-                fontSize: '20px',
+                fontSize: '18px',
                 fontWeight: '700',
                 color: item.color,
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
-                marginBottom: '24px',
-                marginTop: '8px',
+                marginBottom: '20px',
+                marginTop: '4px',
                 position: 'relative',
-                zIndex: 1
+                zIndex: 1,
+                textShadow: '0 1px 2px rgba(255,255,255,0.8)'
               }}>
                 {item.name}
               </h3>
               
               {/* Circular image */}
               <div style={{
-                width: '180px',
-                height: '180px',
-                margin: '0 auto 28px',
+                width: '160px',
+                height: '160px',
+                margin: '0 auto 20px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: `4px solid ${item.color}`,
@@ -673,20 +674,20 @@ export default function Home() {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '12px',
-                marginBottom: '28px',
+                gap: '10px',
+                marginBottom: '20px',
                 textAlign: 'left',
                 padding: '0 16px',
                 flex: '1',
                 position: 'relative',
                 zIndex: 1
               }}>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', color: '#2d5a6b', fontWeight: '600'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)'}}>
                   <span style={{color: item.color, fontSize: '18px'}}>⏱️</span>
                   <span>{item.hours} HOURS</span>
                 </div>
                 {item.features.map((feature, i) => (
-                  <div key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', color: '#2d5a6b', fontWeight: '600'}}>
+                  <div key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)'}}>
                     <span style={{color: item.color, fontSize: '18px'}}>🐚</span>
                     <span>{feature.toUpperCase()}</span>
                   </div>
