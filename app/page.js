@@ -85,13 +85,7 @@ function SignaturePad({ onChange }) {
 
 export default function Home() {
   const { settings } = useSiteSettings();
-  const [showSplash, setShowSplash] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const hasVisited = sessionStorage.getItem('mermaidalay_visited');
-      return !hasVisited;
-    }
-    return true;
-  });
+  const [showSplash, setShowSplash] = useState(true); // Always true on initial render to prevent hydration mismatch
   const [splashLeaving, setSplashLeaving] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(1);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
@@ -110,6 +104,14 @@ export default function Home() {
   const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventCity: '' });
   const [paymentInfo, setPaymentInfo] = useState({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
 
+  // Check if user has visited before (client-side only, after hydration)
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem('mermaidalay_visited');
+    if (hasVisited) {
+      setShowSplash(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (settings) {
       applySettingsStyle(settings);
@@ -117,7 +119,7 @@ export default function Home() {
   }, [settings]);
 
   useEffect(() => {
-    if (showSplash && typeof window !== 'undefined') {
+    if (showSplash) {
       sessionStorage.setItem('mermaidalay_visited', 'true');
       const timer = setTimeout(() => {
         dismissSplash();
@@ -366,17 +368,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="stats-strip"><div className="container stats-grid"><div><strong>15 ft × 15 ft</strong><span>immersive lagoon</span></div><div><strong>$750</strong><span>packages from</span></div><div><strong>10–25</strong><span>tails included</span></div><div><strong>California</strong><span>launch market</span></div></div></section>
+      <section className="stats-strip"><div className="container stats-grid"><div><span>immersive lagoon</span><strong>15 ft × 15 ft</strong></div><div><span>packages from</span><strong>$750</strong></div><div><span>tails included</span><strong>10–25</strong></div><div><span>launch market</span><strong>California</strong></div></div></section>
 
       <section className="section" id="experience"><div className="container">
-        <div className="section-heading split-heading"><div><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">More than a rental</p><h2>A complete fantasy world, brought to your event.</h2></div><p>From the pirate ship and castle to shell thrones, crowns, pearls and colorful tails, every part of the experience is designed to create a premium, immersive celebration.</p></div>
+        <div className="section-heading split-heading"><div><img src="/images/mermaidalay-mermaid-emblem2.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">More than a rental</p><h2>A complete fantasy world, brought to your event.</h2></div><p>From the pirate ship and castle to shell thrones, crowns, pearls and colorful tails, every part of the experience is designed to create a premium, immersive celebration.</p></div>
         <div className="story-grid">
           <img src="/images/lagoon-product.png" alt="Mermaidalay lagoon with castle, pirate ship, slides and shell seats" />
           <div className="story-cards" style={{marginBottom: '80px'}}>
-            <article style={{ backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid Lagoons Collections</h3><p style={{ color: '#173c50', fontWeight: '600' }}>• Coral Cove (Active Now)<br />• Sirens Cove (Coming Soon)<br />• Atlantis (Coming Soon)</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Mermaid transformation</h3><p style={{color: '#173c50', fontWeight: '600'}}>Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories.</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Effortless hosting</h3><p style={{color: '#173c50', fontWeight: '600'}}>Delivery, installation, styling and breakdown handled for you.</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Memories built in</h3><p style={{color: '#173c50', fontWeight: '600'}}>A unique experience creating everlasting memories and magical moments—a dream come true.</p></div></article>
+            <article style={{ backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid Lagoons Collections</h3><p style={{ color: '#173c50', fontWeight: '600' }}>• Coral Cove (Active Now)<br />• Sirens Cove (Coming Soon)<br />• Atlantis (Coming Soon)</p></div></article>
+            <article style={{ backgroundImage: 'url(/images/seep2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid transformation</h3><p style={{ color: '#1d4d67', fontWeight: '600' }}>Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories.</p></div></article>
+            <article style={{ backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Effortless hosting</h3><p style={{ color: '#173c50', fontWeight: '600' }}>Delivery, installation, styling and breakdown handled for you.</p></div></article>
+            <article style={{ backgroundImage: 'url(/images/seep4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Memories built in</h3><p style={{ color: '#173c50', fontWeight: '600' }}>A unique experience creating everlasting memories and magical moments—a dream come true.</p></div></article>
           </div>
         </div>
       </div></section>
@@ -395,7 +397,7 @@ export default function Home() {
       <section className="section booking-section" id="booking"><div className="container booking-grid" style={{marginBottom: '80px'}}>
         <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package above and click below to start your booking. Our 3-step process includes package selection, liability waiver, and secure payment.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div><button type="button" className="button primary" onClick={() => setBookingOpen(true)}>Start Booking</button></div>
         <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', borderRadius: '16px' }}>
-          <div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '16px'}}></div>
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '16px' }}></div>
           <div style={{position: 'relative', zIndex: 1}}>
             <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#173c50', fontWeight: '700' }}>Quick Package Builder</h3>
             <p style={{ fontSize: '14px', color: '#173c50', marginBottom: '20px', fontWeight: '600' }}>Preview your selection before booking</p>
