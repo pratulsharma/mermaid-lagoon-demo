@@ -160,6 +160,17 @@ export default function Home() {
     }
   }, [showSplash]);
 
+  // Check for #booking hash and open booking modal
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#booking') {
+      // Wait for splash to dismiss if showing
+      const timer = setTimeout(() => {
+        setBookingOpen(true);
+      }, showSplash ? 3500 : 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showSplash]);
+
   // Search content data
   const searchableContent = useMemo(() => [
     { type: 'Package', title: 'Mermaid Splash', content: '4 hour experience, inflatable lagoon, water included, 10 mermaid tails, setup & breakdown', price: '$750', link: '#packages' },

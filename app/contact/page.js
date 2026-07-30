@@ -39,7 +39,7 @@ export default function Contact() {
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
             <a href="/contact" style={{fontWeight: '700'}}>Contact Us</a>
-            <a href="/" className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</a>
+            <a href="/#booking" className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</a>
             <a href="/admin/login" style={{fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit'}}>⚙️</a>
           </div>
           <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
@@ -56,7 +56,7 @@ export default function Contact() {
           <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
           <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
           <a href="/contact" onClick={() => setMobileMenuOpen(false)} style={{fontWeight: '700'}}>Contact Us</a>
-          <a href="/" className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</a>
+          <a href="/#booking" className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</a>
         </div>
       </header>
 
@@ -173,7 +173,7 @@ export default function Contact() {
                   <p style={{marginLeft: '36px', color: '#666', marginBottom: '12px'}}>
                     Start planning your magical mermaid experience today!
                   </p>
-                  <a href="/" className="button primary" style={{marginLeft: '36px', display: 'inline-block'}}>Book Now</a>
+                  <a href="/#booking" className="button primary" style={{marginLeft: '36px', display: 'inline-block'}}>Book Now</a>
                 </div>
               </div>
             </div>

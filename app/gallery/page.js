@@ -42,7 +42,7 @@ export default function Gallery() {
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
             <a href="/contact">Contact Us</a>
-            <button type="button" onClick={() => window.location.href = '/'} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
+            <button type="button" onClick={() => window.location.href = '/#booking'} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
           </div>
                   <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
                       <span></span>
@@ -58,7 +58,7 @@ export default function Gallery() {
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
                   <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
-                  <button type="button" onClick={() => { window.location.href = '/'; }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
+                  <button type="button" onClick={() => { window.location.href = '/#booking'; }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
               </div>
       </header>
 
