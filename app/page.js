@@ -575,7 +575,7 @@ export default function Home() {
         <div className="story-grid">
           <img src="/images/mermaidalay-mermaid-emblem2.png" alt="Mermaidalay lagoon with castle, pirate ship, slides and shell seats" />
           <div className="story-cards" style={{marginBottom: '80px'}}>
-            <article style={{ backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid Lagoons Collections</h3><p style={{ color: '#173c50', fontWeight: '600' }}>• Coral Cove (Active Now)<br />• Sirens Cove (Coming Soon)<br />• Atlantis (Coming Soon)</p></div></article>
+            <article style={{ backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid Lagoons Collections</h3><p style={{ color: '#173c50', fontWeight: '600' }}>• Coral Cove (Active Now)<br />• Sirens Cove (Coming Soon)<br />• Atlantis (Coming Soon)</p></div></article>
             <article style={{ backgroundImage: 'url(/images/seep2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Mermaid transformation</h3><p style={{ color: '#1d4d67', fontWeight: '600' }}>Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories.</p></div></article>
             <article style={{ backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Effortless hosting</h3><p style={{ color: '#173c50', fontWeight: '600' }}>Delivery, installation, styling and breakdown handled for you.</p></div></article>
             <article style={{ backgroundImage: 'url(/images/seep4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}><div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '12px' }}></div><div style={{ position: 'relative', zIndex: 1 }}><h3 style={{ color: '#00a0b8', fontWeight: '700' }}>Memories built in</h3><p style={{ color: '#173c50', fontWeight: '600' }}>A unique experience creating everlasting memories and magical moments—a dream come true.</p></div></article>
@@ -596,7 +596,7 @@ export default function Home() {
               key={item.name}
               style={{
                 position: 'relative',
-                backgroundImage: `url(/images/seep${index + 1}.jpg)`,
+                backgroundImage: `url(/images/seep${index === 0 ? 4 : index + 1}.jpg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: '24px',
@@ -625,9 +625,9 @@ export default function Home() {
                 zIndex: 0
               }} />
               {/* Decorative corner embellishments */}
-              <div style={{position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: `drop-shadow(0 2px 4px ${item.color}80)`, zIndex: 2}}>🐚</div>
-              <div style={{position: 'absolute', top: '24px', left: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2}}>🪸</div>
-              <div style={{position: 'absolute', top: '24px', right: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2}}>🪸</div>
+              <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: `drop-shadow(0 2px 4px ${item.color}80)`, zIndex: 2 }}>🐚</div>
+              <div style={{ position: 'absolute', top: '24px', left: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2 }}>🪸</div>
+              <div style={{ position: 'absolute', top: '24px', right: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2 }}>🪸</div>
               
               {/* Title */}
               <h3 style={{
@@ -682,12 +682,12 @@ export default function Home() {
                 position: 'relative',
                 zIndex: 1
               }}>
-                <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)'}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)' }}>
                   <span style={{color: item.color, fontSize: '18px'}}>⏱️</span>
                   <span>{item.hours} HOURS</span>
                 </div>
                 {item.features.map((feature, i) => (
-                  <div key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)'}}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#173c50', fontWeight: '700', textShadow: '0 1px 1px rgba(255,255,255,0.8)' }}>
                     <span style={{color: item.color, fontSize: '18px'}}>🐚</span>
                     <span>{feature.toUpperCase()}</span>
                   </div>
@@ -713,7 +713,7 @@ export default function Home() {
               </div>
               
               {/* Bottom decoration */}
-              <div style={{position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', opacity: 0.4, zIndex: 2}}>✨</div>
+              <div style={{ position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', opacity: 0.4, zIndex: 2 }}>✨</div>
             </article>
           ))}
         </div>
@@ -722,7 +722,7 @@ export default function Home() {
 
       <section className="section booking-section" id="booking"><div className="container booking-grid" style={{marginBottom: '80px'}}>
         <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package above and click below to start your booking. Our 3-step process includes package selection, liability waiver, and secure payment.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div><button type="button" className="button primary" onClick={() => setBookingOpen(true)}>Start Booking</button></div>
-        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', borderRadius: '16px' }}>
+        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', borderRadius: '16px' }}>
           <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '16px' }}></div>
           <div style={{position: 'relative', zIndex: 1}}>
             <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#173c50', fontWeight: '700' }}>Quick Package Builder</h3>
