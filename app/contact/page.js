@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-export default function Contact() {
+import BookingModal from '../../components/BookingModal';
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const [bookingOpen, setBookingOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -39,7 +39,7 @@ export default function Contact() {
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
             <a href="/contact" style={{fontWeight: '700'}}>Contact Us</a>
-            <a href="/#booking" className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</a>
+                      <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{ padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap' }}>Book Now</button>
             <a href="/admin/login" style={{fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit'}}>⚙️</a>
           </div>
           <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
@@ -56,7 +56,7 @@ export default function Contact() {
           <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
           <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
           <a href="/contact" onClick={() => setMobileMenuOpen(false)} style={{fontWeight: '700'}}>Contact Us</a>
-          <a href="/#booking" className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</a>
+                  <button type="button" onClick={() => { setBookingOpen(true); setMobileMenuOpen(false); }} className="button primary" style={{ width: '100%', marginTop: '8px' }}>Book Now</button>
         </div>
       </header>
 
@@ -173,7 +173,7 @@ export default function Contact() {
                   <p style={{marginLeft: '36px', color: '#666', marginBottom: '12px'}}>
                     Start planning your magical mermaid experience today!
                   </p>
-                  <a href="/#booking" className="button primary" style={{marginLeft: '36px', display: 'inline-block'}}>Book Now</a>
+                                  <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{ marginLeft: '36px', display: 'inline-block' }}>Book Now</button>
                 </div>
               </div>
             </div>
@@ -225,6 +225,9 @@ export default function Contact() {
           </div>
         </div>
       </footer>
+
+          <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
     </>
   );
 }
+

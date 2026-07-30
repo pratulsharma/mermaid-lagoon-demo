@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import BookingModal from '../../components/BookingModal';
 
 export default function Gallery() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -42,7 +44,7 @@ export default function Gallery() {
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
             <a href="/contact">Contact Us</a>
-            <button type="button" onClick={() => window.location.href = '/#booking'} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
+            <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{ padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap' }}>Book Now</button>
           </div>
                   <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
                       <span></span>
@@ -58,7 +60,7 @@ export default function Gallery() {
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
                   <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
-                  <button type="button" onClick={() => { window.location.href = '/#booking'; }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
+          <button type="button" onClick={() => { setBookingOpen(true); setMobileMenuOpen(false); }} className="button primary" style={{ width: '100%', marginTop: '8px' }}>Book Now</button>
               </div>
       </header>
 
@@ -207,6 +209,8 @@ export default function Gallery() {
           </div>
         </div>
       )}
+
+      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
     </main>
   );
 }
