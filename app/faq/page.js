@@ -21,15 +21,19 @@ export default function FAQ() {
   const faqs = [
     {
       question: "What is included in each party package?",
-      answer: "Each package includes the inflatable mermaid lagoon, water setup, mermaid tails, and everything listed in the selected package. Higher-tier packages include additional decorations, themed experiences, and premium features."
+      answer: "Each package includes the inflatable mermaid lagoon (15 ft × 15 ft, up to 2 ft of water), water setup, mermaid tails, and everything listed in the selected package. Higher-tier packages include additional decorations, themed experiences, and premium features."
     },
     {
       question: "What ages are Mermaid parties best for?",
-      answer: "Our experiences are designed primarily for children ages 4–12, but older children and even adults can enjoy the magic too!"
+      answer: "Our experiences are designed primarily for children ages 4–12. Water depth recommendations: 12 inches (1 ft) for ages 2-5, 18 inches (1.5 ft) for ages 4-8, and 24 inches (2 ft) for ages 6-12."
+    },
+    {
+      question: "What are the pool dimensions?",
+      answer: "The inflatable mermaid lagoon is 15 ft × 15 ft, with a maximum water depth of 2 feet. This shallow design ensures safety for children while providing plenty of space for magical mermaid fun."
     },
     {
       question: "How much space is required?",
-      answer: "We typically recommend a flat outdoor area measuring approximately 25 ft × 25 ft or larger, depending on the selected package. If you're unsure, simply send us a photo of your yard and we'll help determine the best setup."
+      answer: "We recommend a flat outdoor area measuring approximately 20 ft × 20 ft (400 sq ft minimum). If you're unsure, simply send us a photo of your yard and we'll help determine the best setup."
     },
     {
       question: "Do you provide the water?",
@@ -44,12 +48,12 @@ export default function FAQ() {
       answer: "Yes. We require access to one or more standard outdoor electrical outlets to power the inflatable equipment. If electricity isn't available, ask us about generator options."
     },
     {
-      question: "Can the party be held at a park?",
-      answer: "Absolutely! Many parks are great locations. Please note that some parks require permits and access to electricity or generators. We're happy to help you determine what's needed."
+      question: "Can the party be held at a park or public space?",
+      answer: "Absolutely! Many parks are great locations. However, rentals at public parks or other public spaces require any permits or approvals required by the property owner or local authority. Customers are responsible for obtaining these permits before their event. Mermaidalay cannot install the inflatable without the required authorization."
     },
     {
       question: "What happens if it rains?",
-      answer: "Safety comes first. If severe weather is forecast, we'll work with you to reschedule your event at no additional charge whenever possible."
+      answer: "Safety comes first. If severe weather is forecast, we offer one complimentary reschedule within 12 months, subject to availability."
     },
     {
       question: "Are the inflatable pools clean?",
@@ -57,43 +61,31 @@ export default function FAQ() {
     },
     {
       question: "Is adult supervision required?",
-      answer: "Yes. An adult must supervise children at all times while using the inflatable lagoon and participating in water activities."
+      answer: "Yes. Adult supervision is required at all times. Mermaid tails can reduce a child's ability to kick, balance, or stand up quickly. First-time users should be closely assisted, and children who are not confident swimmers should wear a U.S. Coast Guard-approved life jacket."
+    },
+    {
+      question: "Are mermaid tails safe?",
+      answer: "Mermaid tails are safe when used properly with adult supervision. Because the tail joins the legs together, it may reduce a child's ability to kick, balance, stand up quickly, or swim freely. They should only be used in shallow water with adult supervision at all times. Life jackets are strongly recommended for non-swimmers."
     },
     {
       question: "Can I add extra mermaid tails?",
-      answer: "Yes! Additional mermaid tails can be added during booking so more children can join the fun."
+      answer: "Yes! Additional mermaid tails can be added for $10 each during booking so more children can join the fun."
     },
     {
       question: "Can I customize my party?",
-      answer: "Of course! Choose from exciting enhancements including: Professional mermaid performer, Professional photography, Balloon arches, Bubble machines, Face painting, Additional decorations, Extra mermaid tails."
+      answer: "Of course! Choose from exciting enhancements including: Photographer, Makeup artist, Mermaid tail extra ($10), Bubble machine ($75), Jewels ($50), Seashell throne ($50)."
     },
     {
       question: "How far do you travel?",
-      answer: "We proudly serve the San Jose area and surrounding communities. Travel fees may apply outside our standard service area."
-    },
-    {
-      question: "How do I reserve my party?",
-      answer: "Simply choose your package, customize your experience, submit your information, and we'll contact you to confirm availability and finalize your booking."
-    },
-    {
-      question: "Is a deposit required?",
-      answer: "Yes. A deposit is required to reserve your event date. The remaining balance is due before or on the day of your event, according to your booking agreement."
+      answer: "We proudly serve San Jose, Sunnyvale, Mountain View, Cupertino, Los Altos and surrounding communities. Travel fees may apply outside our standard service area."
     },
     {
       question: "What is your cancellation policy?",
-      answer: "Deposits are generally non-refundable, but we understand plans change. Depending on notice and availability, we'll do our best to reschedule your event."
+      answer: "Cancellation more than 14 days before the event: 30% non-refundable deposit forfeited (from total package amount). Cancellation within 7 days of the event: No refund. Unsafe weather: One complimentary reschedule within 12 months, subject to availability. Permits: Customers are responsible for obtaining any required permits for public venues before the event. No-shows or inaccessible setup location: No refund."
     },
     {
       question: "Are you insured?",
       answer: "Yes. We carry business liability insurance to help ensure a safe and professional experience for your event."
-    },
-    {
-      question: "Can adults use the lagoon?",
-      answer: "Our inflatable lagoons are designed primarily for children. Please contact us if you're planning an event that includes older participants so we can recommend the best option."
-    },
-    {
-      question: "How do I contact Mermaidalay?",
-      answer: "Use the booking form on our website or contact us directly by phone or email. We'll be happy to answer any questions and help plan your magical celebration."
     }
   ];
 
@@ -106,10 +98,10 @@ export default function FAQ() {
                       <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
-            <a href="/#experience">Why us?</a>
+            <a href="/#top">Home</a>
             <a href="/#packages">Packages</a>
-            <a href="/#reels">Reels</a>
             <a href="/gallery">Gallery</a>
+            <a href="/#service-areas">Locations</a>
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
           </div>
@@ -124,10 +116,10 @@ export default function FAQ() {
                   </button>
         </nav>
               <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-                  <a href="/#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+                  <a href="/#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
                   <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-                  <a href="/#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
                   <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+                  <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
                   <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
@@ -144,6 +136,57 @@ export default function FAQ() {
             <p className="eyebrow">Got Questions?</p>
             <h2>Everything you need to know</h2>
             <p style={{fontSize: '18px', maxWidth: '800px', margin: '24px auto 0', lineHeight: '1.6'}}>Find answers about our magical mermaid lagoon experiences, from setup and safety to customization options.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" style={{paddingTop: '40px'}}>
+        <div className="container" style={{maxWidth: '900px'}}>
+          <div style={{background: 'linear-gradient(135deg, rgba(255,240,248,0.5), rgba(224,251,255,0.5))', padding: '40px', borderRadius: '16px', marginBottom: '60px'}}>
+            <h2 style={{marginTop: 0, marginBottom: '24px', color: '#173c50'}}>Water Depth & Safety Guidelines</h2>
+            <p style={{marginBottom: '20px'}}>Our inflatable mermaid lagoon is <strong>15 ft × 15 ft</strong>, with a maximum water depth of <strong>2 feet</strong>. This shallow design ensures safety for children while providing plenty of space for magical fun.</p>
+            <table style={{width: '100%', borderCollapse: 'collapse', marginBottom: '20px'}}>
+              <thead>
+                <tr style={{background: '#173c50', color: '#fff'}}>
+                  <th style={{padding: '12px', textAlign: 'left', borderRadius: '8px 0 0 0'}}>Water Depth</th>
+                  <th style={{padding: '12px', textAlign: 'left'}}>Best Age</th>
+                  <th style={{padding: '12px', textAlign: 'left', borderRadius: '0 8px 0 0'}}>Typical Child Height</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{background: '#fff'}}>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>12 inches (1 ft)</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>2–5 years</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>Up to 3½ ft (107 cm)</td>
+                </tr>
+                <tr style={{background: '#fff0f8'}}>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>18 inches (1.5 ft)</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>4–8 years</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>About 3½–4½ ft (107–137 cm)</td>
+                </tr>
+                <tr style={{background: '#fff'}}>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>24 inches (2 ft)</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>6–12 years</td>
+                  <td style={{padding: '12px', border: '1px solid #e0e0e0'}}>About 4–5½ ft (122–168 cm)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{background: '#fff0f8', padding: '40px', borderRadius: '16px', marginBottom: '60px', border: '3px solid #c8a4b1'}}>
+            <h2 style={{marginTop: 0, marginBottom: '16px', color: '#d32f2f'}}>Mermaid Tail Safety Notice</h2>
+            <h3 style={{color: '#173c50', fontSize: '20px', marginBottom: '16px'}}>Adult Supervision Required</h3>
+            <p style={{marginBottom: '16px', lineHeight: '1.7'}}>Mermaid tails are designed for fun and imaginative play, but they can present a safety risk if not used properly. Because the tail joins the legs together, it may reduce a child's ability to kick, balance, stand up quickly, or swim freely, especially for first-time users.</p>
+            <h4 style={{color: '#173c50', marginBottom: '12px'}}>For the safety of all participants:</h4>
+            <ul style={{lineHeight: '1.8', marginBottom: '16px'}}>
+              <li>An adult must supervise children at all times while wearing a mermaid tail</li>
+              <li>First-time users should be closely assisted until they become comfortable moving safely in the water</li>
+              <li>Mermaid tails should only be used in shallow water and in accordance with the recommended water depth and age guidelines</li>
+              <li>Children who are not confident swimmers or who cannot swim should wear a U.S. Coast Guard-approved life jacket while using a mermaid tail</li>
+              <li>No diving, running, rough play, or jumping while wearing a mermaid tail</li>
+              <li>If a child feels uncomfortable, tired, or has difficulty moving, the mermaid tail should be removed immediately</li>
+            </ul>
+            <p style={{background: '#d32f2f', color: '#fff', padding: '16px', borderRadius: '8px', fontWeight: '600'}}>⚠️ Warning: Mermaid tails are not flotation devices and do not prevent drowning. Adult supervision is required at all times. Mermaidalay strongly recommends that children use mermaid tails only under the direct supervision of a responsible adult, particularly during their first experience.</p>
           </div>
         </div>
       </section>
@@ -201,7 +244,7 @@ export default function FAQ() {
             <p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p>
           </div>
           <div><strong>Explore</strong><a href="/#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div>
-          <div><strong>Legal</strong><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a><span>California launch market</span></div>
+          <div><strong>Legal</strong><a href="/privacy">Privacy Policy</a><a href="/terms">Terms & Conditions</a><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a></div>
         </div>
         <div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div>
       </footer>

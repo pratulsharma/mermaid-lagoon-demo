@@ -10,13 +10,12 @@ const packages = [
 ];
 
 const addOns = [
-  ['Professional mermaid performer', 250],
-  ['Additional mermaid tail', 15],
-  ['Professional photographer', 350],
+  ['Photographer', 350, 'https://example.com/photographer'],
+  ['Makeup artist', 200, 'https://example.com/makeup'],
+  ['Mermaid tail extra', 10],
   ['Bubble machine', 75],
-  ['Party decorations', 200],
-  ['Luxury balloon arch', 350],
-  ['Face painting', 200]
+  ['Jewels', 50],
+  ['Seashell throne', 50]
 ];
 
 function SignaturePad({ onChange }) {
@@ -331,7 +330,7 @@ export default function Home() {
             <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
-            <a href="#experience">Why us?</a><a href="#packages">Packages</a><a href="#reels">Reels</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/admin/login" style={{fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit'}}>⚙️</a>
+            <a href="#top">Home</a><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="#service-areas">Locations</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/admin/login" style={{fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit'}}>⚙️</a>
             <div className="nav-contact">
               <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
               <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
@@ -344,10 +343,10 @@ export default function Home() {
           </button>
         </nav>
         <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-          <a href="#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+          <a href="#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
           <a href="#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-          <a href="#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
           <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+          <a href="#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
           <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
           <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
           <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
@@ -361,25 +360,23 @@ export default function Home() {
           <div className="hero-copy">
             <p className="eyebrow">California's magical mobile lagoon experience</p>
             <h1>{settings.content.heroTitle}<br />Become a mermaid.</h1>
-            <p className="hero-text">{settings.content.heroDescription}</p>
             <div className="hero-actions"><a href="#booking" className="button primary" onClick={(e) => { e.preventDefault(); setBookingOpen(true); }}>Plan my party</a><button type="button" className="button secondary" onClick={() => setVideoOpen(true)}>Watch the magic</button></div>
-            <div className="trust-row"><span>✓ Delivery & setup</span><span>✓ Mermaid tail inventory</span><span>✓ Photo-ready styling</span></div>
           </div>
           <div className="hero-art"><img src="/images/lagoon-kids.png" alt="Children enjoying the Mermaidalay inflatable lagoon" /></div>
         </div>
       </section>
 
-      <section className="stats-strip"><div className="container stats-grid"><div><strong>20 ft</strong><span>immersive lagoon</span></div><div><strong>$750</strong><span>packages from</span></div><div><strong>10–25</strong><span>tails included</span></div><div><strong>California</strong><span>launch market</span></div></div></section>
+      <section className="stats-strip"><div className="container stats-grid"><div><strong>15 ft × 15 ft</strong><span>immersive lagoon</span></div><div><strong>$750</strong><span>packages from</span></div><div><strong>10–25</strong><span>tails included</span></div><div><strong>California</strong><span>launch market</span></div></div></section>
 
       <section className="section" id="experience"><div className="container">
         <div className="section-heading split-heading"><div><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">More than a rental</p><h2>A complete fantasy world, brought to your event.</h2></div><p>From the pirate ship and castle to shell thrones, crowns, pearls and colorful tails, every part of the experience is designed to create a premium, immersive celebration.</p></div>
         <div className="story-grid">
           <img src="/images/lagoon-product.png" alt="Mermaidalay lagoon with castle, pirate ship, slides and shell seats" />
           <div className="story-cards" style={{marginBottom: '80px'}}>
-            <article style={{backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3>Show-stopping lagoon</h3><p>Castle, pirate ship, coral reef, shell chairs, star floor and safe slide details.</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3>Mermaid transformation</h3><p>Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories.</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3>Effortless hosting</h3><p>Delivery, installation, styling and breakdown handled for you.</p></div></article>
-            <article style={{backgroundImage: 'url(/images/seep4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.8)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3>Memories built in</h3><p>Photo destinations, demo reels and optional professional photography.</p></div></article>
+            <article style={{backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.92)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>MERMAID LAGOONS COLLECTIONS</h3><p style={{color: '#173c50', fontWeight: '600'}}>• CORAL COVE (ACTIVE NOW)<br/>• SIRENS COVE (COMING SOON)<br/>• ATLANTIS (COMING SOON)</p></div></article>
+            <article style={{backgroundImage: 'url(/images/seep2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.92)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Mermaid transformation</h3><p style={{color: '#173c50', fontWeight: '600'}}>Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories.</p></div></article>
+            <article style={{backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.92)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Effortless hosting</h3><p style={{color: '#173c50', fontWeight: '600'}}>Delivery, installation, styling and breakdown handled for you.</p></div></article>
+            <article style={{backgroundImage: 'url(/images/seep4.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative'}}><div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.92)', backdropFilter: 'blur(2px)', borderRadius: '12px'}}></div><div style={{position: 'relative', zIndex: 1}}><h3 style={{color: '#173c50', fontWeight: '700'}}>Memories built in</h3><p style={{color: '#173c50', fontWeight: '600'}}>A unique experience creating everlasting memories and magical moments—a dream come true.</p></div></article>
           </div>
         </div>
       </div></section>
@@ -397,15 +394,26 @@ export default function Home() {
 
       <section className="section booking-section" id="booking"><div className="container booking-grid" style={{marginBottom: '80px'}}>
         <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package above and click below to start your booking. Our 3-step process includes package selection, liability waiver, and secure payment.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div><button type="button" className="button primary" onClick={() => setBookingOpen(true)}>Start Booking Process</button></div>
-        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', background: 'linear-gradient(135deg, rgba(255,240,248,0.5), rgba(224,251,255,0.5))', borderRadius: '16px' }}>
-          <div>
-            <h3 style={{ marginTop: 0, marginBottom: '16px' }}>Quick Package Builder</h3>
-            <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>Preview your selection before booking</p>
+        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', backgroundImage: 'url(/images/seep1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', borderRadius: '16px' }}>
+          <div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.92)', backdropFilter: 'blur(2px)', borderRadius: '16px'}}></div>
+          <div style={{position: 'relative', zIndex: 1}}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#173c50', fontWeight: '700' }}>Quick Package Builder</h3>
+            <p style={{ fontSize: '14px', color: '#173c50', marginBottom: '20px', fontWeight: '600' }}>Preview your selection before booking</p>
           </div>
-          <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-          <fieldset><legend>2. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
-          <fieldset><legend>3. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
-          <button type="button" className="button primary full" onClick={() => setBookingOpen(true)}>Continue to Booking →</button>
+          <div style={{position: 'relative', zIndex: 1}}>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>1. Choose Location</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>2. Choose Day</legend><div><input type="date" style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>3. Choose Time</legend><div><input type="time" style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>4. Choose Lagoon</legend><div className="choice-list"><label className="choice selected"><input type="radio" name="lagoon" checked readOnly /><span><strong>Coral Cove</strong><small>Currently active</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Sirens Cove</strong><small>Coming soon</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Atlantis</strong><small>Coming soon</small></span></label></div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>5. Choose Package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
+            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>Add Extra Magic</legend><div className="choice-list compact">{addOns.map((item, index) => {
+              const name = item[0];
+              const price = item[1];
+              const link = item[2];
+              return <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}{link ? ' 🔗' : ''}</strong><small>+${price}</small></span></label>;
+            })}</div></fieldset>
+            <button type="button" className="button primary full" onClick={() => setBookingOpen(true)}>Continue to Booking →</button>
+          </div>
         </div>
       </div></section>
 
@@ -428,7 +436,7 @@ export default function Home() {
       )}
 
 
-      <footer><div className="container footer-grid"><div><div className="brand footer-brand brand-wordmark"><img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay" /></div><p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p></div><div><strong>Explore</strong><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div><div><strong>Legal</strong><button className="footer-link" type="button" onClick={() => setWaiverOpen(true)}>Electronic waiver</button><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Original waiver PDF</a><span>California launch market</span></div></div><div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div></footer>
+      <footer><div className="container footer-grid"><div><div className="brand footer-brand brand-wordmark"><img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay" /></div><p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p></div><div><strong>Explore</strong><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div><div><strong>Legal</strong><a href="/privacy">Privacy Policy</a><a href="/terms">Terms & Conditions</a><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a></div></div><div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div></footer>
 
       {waiverOpen && <div className="modal-backdrop" role="presentation"><section className="waiver-modal" role="dialog" aria-modal="true" aria-labelledby="waiver-title"><div className="modal-header"><div><p className="eyebrow">Online agreement</p><h2 id="waiver-title">Rental Agreement & Liability Waiver</h2></div><button className="close-button" type="button" onClick={() => setWaiverOpen(false)} aria-label="Close waiver">×</button></div>
         <div className="waiver-note">This demo reproduces the uploaded Mermaidalay waiver. For live use, have California counsel review it and connect signatures to secure storage, timestamps, document versioning and an audit trail.</div>

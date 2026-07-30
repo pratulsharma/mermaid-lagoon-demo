@@ -35,10 +35,10 @@ export default function Gallery() {
                       <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
           </a>
           <div className="nav-links">
-            <a href="/#experience">Why us?</a>
+            <a href="/#top">Home</a>
             <a href="/#packages">Packages</a>
-            <a href="/#reels">Reels</a>
             <a href="/gallery">Gallery</a>
+            <a href="/#service-areas">Locations</a>
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
           </div>
@@ -53,10 +53,10 @@ export default function Gallery() {
                   </button>
         </nav>
               <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-                  <a href="/#experience" onClick={() => setMobileMenuOpen(false)}>Why us?</a>
+                  <a href="/#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
                   <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-                  <a href="/#reels" onClick={() => setMobileMenuOpen(false)}>Reels</a>
                   <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
+                  <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
                   <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
@@ -120,7 +120,7 @@ export default function Gallery() {
             <p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p>
           </div>
           <div><strong>Explore</strong><a href="/#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div>
-          <div><strong>Legal</strong><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a><span>California launch market</span></div>
+          <div><strong>Legal</strong><a href="/privacy">Privacy Policy</a><a href="/terms">Terms & Conditions</a><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a></div>
         </div>
         <div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div>
       </footer>
