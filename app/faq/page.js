@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import BookingModal from '../../components/BookingModal';
+import Navbar from '../../components/Navbar';
 
 export default function FAQ() {
   const [contactOpen, setContactOpen] = useState(false);
@@ -11,7 +12,6 @@ export default function FAQ() {
     phone: '',
     message: ''
   });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [openFAQIndex, setOpenFAQIndex] = useState(null);
 
@@ -94,41 +94,7 @@ export default function FAQ() {
 
   return (
     <main>
-      <header className="nav-wrap">
-        <nav className="nav container">
-          <a className="brand brand-wordmark" href="/#top" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-            <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-                      <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
-          </a>
-          <div className="nav-links">
-            <a href="/#top">Home</a>
-            <a href="/#packages">Packages</a>
-            <a href="/gallery">Gallery</a>
-            <a href="/#service-areas">Locations</a>
-            <a href="/about">About</a>
-            <a href="/faq">FAQ</a>
-            <a href="/contact">Contact Us</a>
-            <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{ padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap' }}>Book Now</button>
-          </div>
-                  <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                  </button>
-        </nav>
-              <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-                  <a href="/#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
-                  <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-                  <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
-                  <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
-                  <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
-                  <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-                  <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
-          <button type="button" onClick={() => { setBookingOpen(true); setMobileMenuOpen(false); }} className="button primary" style={{ width: '100%', marginTop: '8px' }}>Book Now</button>
-              </div>
-      </header>
-
-  
+      <Navbar currentPage="faq" onBookNowClick={() => setBookingOpen(true)} />
 
       <section className="section">
         <div className="container">
