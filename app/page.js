@@ -641,7 +641,12 @@ export default function Home() {
                 marginTop: '4px',
                 position: 'relative',
                 zIndex: 1,
-                textShadow: '0 1px 2px rgba(255,255,255,0.8)'
+                textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+                background: 'rgba(255, 255, 255, 0.9)',
+                padding: '8px 20px',
+                borderRadius: '20px',
+                display: 'inline-block',
+                boxShadow: `0 2px 8px ${item.color}30`
               }}>
                 {item.name}
               </h3>
