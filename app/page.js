@@ -107,6 +107,9 @@ export default function Home() {
   const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bookingStep, setBookingStep] = useState('form'); // 'form', 'waiver', 'payment', 'success'
+  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventCity: '' });
+  const [paymentInfo, setPaymentInfo] = useState({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
 
   useEffect(() => {
     if (settings) {
@@ -132,10 +135,42 @@ export default function Home() {
   const total = useMemo(() => packages[selectedPackage].price + selectedAddOns.reduce((sum, index) => sum + addOns[index][1], 0), [selectedPackage, selectedAddOns]);
   const toggleAddOn = (index) => setSelectedAddOns((items) => items.includes(index) ? items.filter((item) => item !== index) : [...items, index]);
 
+  const proceedToWaiver = () => {
+    // Validate booking form fields
+    if (!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventCity) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    // Pre-fill waiver with booking details
+    setWaiver({ ...waiver, name: bookingDetails.name, email: bookingDetails.email, eventDate: bookingDetails.eventDate });
+    setBookingStep('waiver');
+  };
+
   const signWaiver = () => {
-    if (!waiver.name || !waiver.email || !waiver.eventDate || !waiver.agree || !signature) return;
+    if (!waiver.name || !waiver.email || !waiver.eventDate || !waiver.agree || !signature) {
+      alert('Please complete all waiver fields and provide your signature');
+      return;
+    }
     setWaiverSigned(true);
-    setWaiverOpen(false);
+    setBookingStep('payment');
+  };
+
+  const processPayment = () => {
+    if (!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode) {
+      alert('Please fill in all payment fields');
+      return;
+    }
+    // Simulate payment processing
+    setBookingStep('success');
+  };
+
+  const resetBooking = () => {
+    setBookingStep('form');
+    setSubmitted(false);
+    setWaiverSigned(false);
+    setSignature('');
+    setBookingDetails({ name: '', email: '', eventDate: '', eventCity: '' });
+    setPaymentInfo({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
   };
 
   const downloadReceipt = () => {
@@ -163,23 +198,120 @@ export default function Home() {
           </video>
         </div>
       </div>}
-      {bookingOpen && <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Book your experience" onClick={() => setBookingOpen(false)}>
+      {bookingOpen && <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Book your experience" onClick={() => { setBookingOpen(false); resetBooking(); }}>
         <div className="booking-modal" onClick={e => e.stopPropagation()}>
-          <button className="modal-close" type="button" aria-label="Close booking" onClick={() => setBookingOpen(false)}>✕</button>
-          <div className="booking-modal-header">
-            <p className="eyebrow">Build your experience</p>
-            <h2>Get an instant party estimate.</h2>
-          </div>
-          <div className="booking-modal-content">
-            {!submitted ? <>
-              <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-              <fieldset><legend>2. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
-              <fieldset><legend>3. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
-              <div className="contact-fields"><label>Name<input type="text" placeholder="Your name" /></label><label>Email<input type="email" placeholder="you@example.com" /></label><label>Event date<input type="date" /></label><label>Event city<input type="text" placeholder="Fremont, CA" /></label></div>
+          <button className="modal-close" type="button" aria-label="Close booking" onClick={() => { setBookingOpen(false); resetBooking(); }}>✕</button>
+
+          {bookingStep === 'form' && <>
+            <div className="booking-modal-header">
+              <p className="eyebrow">Build your experience</p>
+              <h2>Get an instant party estimate.</h2>
+            </div>
+            <div className="booking-modal-content">
+              <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
+              <fieldset><legend>2. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="modal-package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
+              <fieldset><legend>3. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" name={`modal-addon-${index}`} checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
+              <div className="contact-fields">
+                <label>Name *<input type="text" placeholder="Your name" value={bookingDetails.name} onChange={(e) => setBookingDetails({ ...bookingDetails, name: e.target.value })} /></label>
+                <label>Email *<input type="email" placeholder="you@example.com" value={bookingDetails.email} onChange={(e) => setBookingDetails({ ...bookingDetails, email: e.target.value })} /></label>
+                <label>Event date *<input type="date" value={bookingDetails.eventDate} onChange={(e) => setBookingDetails({ ...bookingDetails, eventDate: e.target.value })} /></label>
+                <label>Event city *<input type="text" placeholder="Fremont, CA" value={bookingDetails.eventCity} onChange={(e) => setBookingDetails({ ...bookingDetails, eventCity: e.target.value })} /></label>
+              </div>
               <div className="estimate-card"><span>Estimated total</span><strong>${total.toLocaleString()}</strong></div>
-              <button type="button" className="button primary full" onClick={() => setSubmitted(true)}>Request availability</button>
-            </> : <div className="success-state"><div className="success-icon">✓</div><h3>Request received</h3><p>This is a front-end demo. Connect the form to email, CRM or booking API to receive live requests.</p><button className="button secondary" type="button" onClick={() => setSubmitted(false)}>Edit request</button></div>}
-          </div>
+              <button type="button" className="button primary full" onClick={proceedToWaiver} disabled={!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventCity}>Continue to Waiver</button>
+            </div>
+          </>}
+
+          {bookingStep === 'waiver' && <>
+            <div className="booking-modal-header">
+              <p className="eyebrow">Step 2 of 3</p>
+              <h2>Sign Liability Waiver</h2>
+            </div>
+            <div className="booking-modal-content">
+              <div className="waiver-text" style={{ maxHeight: '300px', overflow: 'auto', padding: '20px', background: '#f9f9f9', borderRadius: '8px', marginBottom: '20px', fontSize: '14px', lineHeight: '1.6' }}>
+                <h3 style={{ marginTop: 0 }}>Mermaidalay Rental Agreement & Liability Waiver</h3>
+                <p><strong>PLEASE READ CAREFULLY BEFORE SIGNING</strong></p>
+                <p>This Agreement is entered into by and between Mermaidalay ("Company") and the undersigned participant or legal guardian ("Renter").</p>
+                <p><strong>1. Rental Terms:</strong> Renter agrees to rent the inflatable mermaid lagoon and accessories for the date and duration specified.</p>
+                <p><strong>2. Assumption of Risk:</strong> Renter acknowledges that use of inflatable equipment involves inherent risks including but not limited to: injury from falls, collisions, or improper use.</p>
+                <p><strong>3. Supervision:</strong> Renter agrees to provide adequate adult supervision at all times during use.</p>
+                <p><strong>4. Safety Rules:</strong> No shoes, sharp objects, food, or drinks in the inflatable. Maximum capacity must be observed.</p>
+                <p><strong>5. Liability Release:</strong> Renter releases Company from all liability for injuries or damages arising from use of the equipment.</p>
+                <p><strong>6. Indemnification:</strong> Renter agrees to indemnify and hold harmless the Company from any claims or damages.</p>
+              </div>
+              <div className="waiver-fields" style={{ display: 'grid', gap: '16px', marginBottom: '20px' }}>
+                <label>Full Name *<input type="text" value={waiver.name} onChange={(e) => setWaiver({ ...waiver, name: e.target.value })} /></label>
+                <label>Email *<input type="email" value={waiver.email} onChange={(e) => setWaiver({ ...waiver, email: e.target.value })} /></label>
+                <label>Phone<input type="tel" value={waiver.phone} onChange={(e) => setWaiver({ ...waiver, phone: e.target.value })} placeholder="(555) 123-4567" /></label>
+                <label>Event Address<input type="text" value={waiver.address} onChange={(e) => setWaiver({ ...waiver, address: e.target.value })} placeholder="123 Main St" /></label>
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <p style={{ fontWeight: 600, marginBottom: '8px' }}>Electronic Signature *</p>
+                <SignaturePad onChange={setSignature} />
+              </div>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '20px' }}>
+                <input type="checkbox" checked={waiver.agree} onChange={(e) => setWaiver({ ...waiver, agree: e.target.checked })} style={{ marginTop: '4px' }} />
+                <span>I have read and agree to the terms of this waiver and certify that I am authorized to sign on behalf of all participants.</span>
+              </label>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button type="button" className="button secondary" onClick={() => setBookingStep('form')}>Back</button>
+                <button type="button" className="button primary" style={{ flex: 1 }} onClick={signWaiver} disabled={!waiver.name || !waiver.email || !waiver.eventDate || !waiver.agree || !signature}>Sign & Continue to Payment</button>
+              </div>
+            </div>
+          </>}
+
+          {bookingStep === 'payment' && <>
+            <div className="booking-modal-header">
+              <p className="eyebrow">Step 3 of 3</p>
+              <h2>Payment Information</h2>
+            </div>
+            <div className="booking-modal-content">
+              <div className="estimate-card" style={{ marginBottom: '24px' }}>
+                <span>Total Amount Due</span>
+                <strong>${total.toLocaleString()}</strong>
+                <small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small>
+              </div>
+              <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px', textAlign: 'center' }}>
+                <strong>Demo Mode:</strong> This is a demonstration payment form. No actual charges will be processed.
+              </p>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                <label>Card Number *<input type="text" placeholder="1234 5678 9012 3456" maxLength="19" value={paymentInfo.cardNumber} onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })} /></label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                  <label>Expiry *<input type="text" placeholder="MM/YY" maxLength="5" value={paymentInfo.expiry} onChange={(e) => setPaymentInfo({ ...paymentInfo, expiry: e.target.value })} /></label>
+                  <label>CVV *<input type="text" placeholder="123" maxLength="4" value={paymentInfo.cvv} onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })} /></label>
+                  <label>ZIP *<input type="text" placeholder="12345" maxLength="5" value={paymentInfo.zipCode} onChange={(e) => setPaymentInfo({ ...paymentInfo, zipCode: e.target.value })} /></label>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <button type="button" className="button secondary" onClick={() => setBookingStep('waiver')}>Back</button>
+                <button type="button" className="button primary" style={{ flex: 1 }} onClick={processPayment} disabled={!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode}>Complete Booking</button>
+              </div>
+            </div>
+          </>}
+
+          {bookingStep === 'success' && <>
+            <div className="booking-modal-header">
+              <p className="eyebrow">Booking Confirmed</p>
+              <h2>You're all set! 🎉</h2>
+            </div>
+            <div className="booking-modal-content">
+              <div className="success-state">
+                <div className="success-icon">✓</div>
+                <h3>Booking Confirmed</h3>
+                <div style={{ textAlign: 'left', background: '#f9f9f9', padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
+                  <p><strong>Package:</strong> {packages[selectedPackage].name}</p>
+                  <p><strong>Date:</strong> {bookingDetails.eventDate}</p>
+                  <p><strong>Location:</strong> {bookingDetails.eventCity}</p>
+                  <p><strong>Total Paid:</strong> ${total.toLocaleString()}</p>
+                </div>
+                <p style={{ marginBottom: '20px' }}>A confirmation email has been sent to {bookingDetails.email}. We'll contact you 48 hours before your event to confirm setup details.</p>
+                <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+                  <strong>Demo Note:</strong> This is a front-end demonstration. In production, this would connect to a payment processor (Stripe, Square), send confirmation emails, and create calendar events.
+                </p>
+                <button className="button primary full" type="button" onClick={() => { setBookingOpen(false); resetBooking(); }}>Close</button>
+              </div>
+            </div>
+          </>}
         </div>
       </div>}
       {showSplash && <div className={`brand-splash ${splashLeaving ? 'is-leaving' : ''}`} role="dialog" aria-label="Welcome to Mermaidalay">
@@ -264,14 +396,17 @@ export default function Home() {
       )}
 
       <section className="section booking-section" id="booking"><div className="container booking-grid" style={{marginBottom: '80px'}}>
-        <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package and enhancements. Travel, venue conditions, staffing and date availability may affect the final quote.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div></div>
-        <div className="booking-form" aria-live="polite">{!submitted ? <>
+        <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package above and click below to start your booking. Our 3-step process includes package selection, liability waiver, and secure payment.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div><button type="button" className="button primary" onClick={() => setBookingOpen(true)}>Start Booking Process</button></div>
+        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', background: 'linear-gradient(135deg, rgba(255,240,248,0.5), rgba(224,251,255,0.5))', borderRadius: '16px' }}>
+          <div>
+            <h3 style={{ marginTop: 0, marginBottom: '16px' }}>Quick Package Builder</h3>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>Preview your selection before booking</p>
+          </div>
           <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
           <fieldset><legend>2. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
           <fieldset><legend>3. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
-          <div className="contact-fields"><label>Name<input type="text" placeholder="Your name" /></label><label>Email<input type="email" placeholder="you@example.com" /></label><label>Event date<input type="date" /></label><label>Event city<input type="text" placeholder="Fremont, CA" /></label></div>
-          <button type="button" className="button primary full" onClick={() => setSubmitted(true)}>Request availability</button>
-        </> : <div className="success-state"><div className="success-icon">✓</div><h3>Request received</h3><p>This is a front-end demo. Connect the form to email, CRM or a booking API to receive live requests.</p><button className="button secondary" type="button" onClick={() => setSubmitted(false)}>Edit request</button></div>}</div>
+          <button type="button" className="button primary full" onClick={() => setBookingOpen(true)}>Continue to Booking →</button>
+        </div>
       </div></section>
 
       <section className="section tails-section"><div className="container tail-grid" style={{marginBottom: '80px'}}><div><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">Choose your shimmer</p><h2>Mermaid tails and treasures for every guest.</h2><p>Colorful tail options plus crowns, pearls, shell props and treasure accessories help every child create a distinct mermaid look.</p></div><img src="/images/tail-collection.png" alt="Colorful mermaid tail collection with crowns and pearl accessories" /></div></section>
