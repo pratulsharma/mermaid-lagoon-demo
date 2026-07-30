@@ -28,7 +28,7 @@ const packages = [
     price: 1250, 
     hours: 8, 
     features: ['5 Seashell chairs', '20+ Mermaid tails', 'Jewels', 'Bubble machine'], 
-    image: '/images/mermaid-throne.png',
+    image: '/images/lagoon-product.png',
     color: '#9b7ba8',
     bgColor: 'rgba(155, 123, 168, 0.1)'
   }
@@ -596,7 +596,9 @@ export default function Home() {
               key={item.name}
               style={{
                 position: 'relative',
-                background: `linear-gradient(135deg, ${item.bgColor} 0%, rgba(255,240,248,0.95) 100%)`,
+                backgroundImage: `url(/images/seep${index + 1}.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
                 borderRadius: '24px',
                 padding: '48px 32px',
                 border: `3px solid ${item.color}`,
@@ -604,16 +606,28 @@ export default function Home() {
                 textAlign: 'center',
                 transition: 'transform 0.3s ease',
                 cursor: 'pointer',
-                overflow: 'visible'
+                overflow: 'visible',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '650px'
               }}
               onClick={() => { setSelectedPackage(index); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
             >
+              {/* Seashell background overlay */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: `linear-gradient(135deg, ${item.bgColor} 0%, rgba(255,240,248,0.92) 100%)`,
+                backdropFilter: 'blur(1px)',
+                borderRadius: '24px',
+                zIndex: 0
+              }} />
               {/* Decorative corner embellishments */}
-              <div style={{position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: `drop-shadow(0 2px 4px ${item.color}80)`}}>🐚</div>
-              <div style={{position: 'absolute', top: '24px', left: '16px', fontSize: '20px', opacity: 0.6}}>🪸</div>
-              <div style={{position: 'absolute', top: '24px', right: '16px', fontSize: '20px', opacity: 0.6}}>🪸</div>
+              <div style={{position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: `drop-shadow(0 2px 4px ${item.color}80)`, zIndex: 2}}>🐚</div>
+              <div style={{position: 'absolute', top: '24px', left: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2}}>🪸</div>
+              <div style={{position: 'absolute', top: '24px', right: '16px', fontSize: '20px', opacity: 0.6, zIndex: 2}}>🪸</div>
               
               {/* Title */}
               <h3 style={{
@@ -624,7 +638,9 @@ export default function Home() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
                 marginBottom: '24px',
-                marginTop: '8px'
+                marginTop: '8px',
+                position: 'relative',
+                zIndex: 1
               }}>
                 {item.name}
               </h3>
@@ -638,7 +654,9 @@ export default function Home() {
                 overflow: 'hidden',
                 border: `4px solid ${item.color}`,
                 boxShadow: `0 8px 24px ${item.color}50, inset 0 2px 8px rgba(0,0,0,0.1)`,
-                background: 'white'
+                background: 'white',
+                position: 'relative',
+                zIndex: 1
               }}>
                 <img 
                   src={item.image} 
@@ -658,7 +676,10 @@ export default function Home() {
                 gap: '12px',
                 marginBottom: '28px',
                 textAlign: 'left',
-                padding: '0 16px'
+                padding: '0 16px',
+                flex: '1',
+                position: 'relative',
+                zIndex: 1
               }}>
                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', color: '#2d5a6b', fontWeight: '600'}}>
                   <span style={{color: item.color, fontSize: '18px'}}>⏱️</span>
@@ -683,13 +704,15 @@ export default function Home() {
                 fontFamily: 'var(--font-fredoka)',
                 boxShadow: `0 6px 20px ${item.color}60, inset 0 2px 0 rgba(255,255,255,0.3)`,
                 margin: '0 auto',
-                display: 'inline-block'
+                display: 'inline-block',
+                position: 'relative',
+                zIndex: 1
               }}>
                 ${item.price.toLocaleString()}
               </div>
               
               {/* Bottom decoration */}
-              <div style={{position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', opacity: 0.4}}>✨</div>
+              <div style={{position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', opacity: 0.4, zIndex: 2}}>✨</div>
             </article>
           ))}
         </div>
