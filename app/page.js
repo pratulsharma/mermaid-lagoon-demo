@@ -369,6 +369,7 @@ export default function Home() {
           <img className="splash-mermaid" src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay mermaid emblem" />
           <img className="splash-wordmark" src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" />
           <p>Swim your dream!</p>
+          More than a party—it's an immersive adventure. Mermaidalay delivers premium inflatable lagoons, sparkling mermaid tails, enchanting ocean-inspired décor, and hassle-free setup, transforming ordinary venues into extraordinary destinations for unforgettable celebrations.
           <button type="button" onClick={dismissSplash}>Enter the lagoon</button>
         </div>
       </div>}
@@ -453,11 +454,9 @@ export default function Home() {
                 </div>
               )}
             </div>
+            <a href="/contact">Contact Us</a>
+            <button type="button" onClick={() => setBookingOpen(true)} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
             <a href="/admin/login" style={{ fontSize: '12px', opacity: 0.5, textDecoration: 'none', color: 'inherit' }}>⚙️</a>
-            <div className="nav-contact">
-              <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
-              <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
-            </div>
           </div>
           <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
             <span></span>
@@ -511,8 +510,8 @@ export default function Home() {
           <a href="#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
           <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
           <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-          <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
-          <a href="tel:+15551234567">📞 (555) 123-4567</a>
+          <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
+          <button type="button" onClick={() => { setBookingOpen(true); setMobileMenuOpen(false); }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
         </div>
       </header>
 
@@ -522,13 +521,14 @@ export default function Home() {
           <div className="hero-copy">
             <p className="eyebrow">California's magical mobile lagoon experience</p>
             <h1>{settings.content.heroTitle}<br />Become a mermaid.</h1>
+            <p class="hero-text">A premium inflatable lagoon, shimmering mermaid tails, immersive décor and effortless setup—delivered to backyards, schools, hotels and special events.</p>
             <div className="hero-actions"><a href="#booking" className="button primary" onClick={(e) => { e.preventDefault(); setBookingOpen(true); }}>Plan my party</a><button type="button" className="button secondary" onClick={() => setVideoOpen(true)}>Watch the magic</button></div>
           </div>
           <div className="hero-art"><img src="/images/lagoon-kids.png" alt="Children enjoying the Mermaidalay inflatable lagoon" /></div>
         </div>
       </section>
 
-      <section className="stats-strip"><div className="container stats-grid"><div><span>immersive lagoon</span><strong>15 ft × 15 ft</strong></div><div><span>packages from</span><strong>$750</strong></div><div><span>tails included</span><strong>10–25</strong></div><div><span>launch market</span><strong>California</strong></div></div></section>
+      <section className="stats-strip"><div className="container stats-grid"><div><span>immersive lagoon</span><strong>225 sq ft.</strong></div><div><span>packages from</span><strong>$750</strong></div><div><span>tails included</span><strong>10–25</strong></div><div><span>launch market</span><strong>California</strong></div></div></section>
 
       <section className="section" id="experience"><div className="container">
         <div className="section-heading split-heading"><div><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">More than a rental</p><h2>A complete fantasy world, brought to your event.</h2></div><p>From the pirate ship and castle to shell thrones, crowns, pearls and colorful tails, every part of the experience is designed to create a premium, immersive celebration.</p></div>

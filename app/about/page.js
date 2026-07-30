@@ -28,10 +28,8 @@ export default function About() {
             <a href="/#service-areas">Locations</a>
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
-          </div>
-          <div className="nav-contact">
-            <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
-            <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
+            <a href="/contact">Contact Us</a>
+            <button type="button" onClick={() => window.location.href = '/'} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
           </div>
                   <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
                       <span></span>
@@ -46,8 +44,8 @@ export default function About() {
                   <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-                  <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
-                  <a href="tel:+15551234567">📞 (555) 123-4567</a>
+                  <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
+                  <button type="button" onClick={() => { window.location.href = '/'; }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
               </div>
       </header>
 

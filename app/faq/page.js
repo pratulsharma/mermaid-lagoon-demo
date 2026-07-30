@@ -10,7 +10,8 @@ export default function FAQ() {
     phone: '',
     message: ''
   });
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFAQIndex, setOpenFAQIndex] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -104,10 +105,8 @@ export default function FAQ() {
             <a href="/#service-areas">Locations</a>
             <a href="/about">About</a>
             <a href="/faq">FAQ</a>
-          </div>
-          <div className="nav-contact">
-            <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
-            <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
+            <a href="/contact">Contact Us</a>
+            <button type="button" onClick={() => window.location.href = '/'} className="button primary" style={{padding: '8px 20px', fontSize: '14px', whiteSpace: 'nowrap'}}>Book Now</button>
           </div>
                   <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
                       <span></span>
@@ -122,8 +121,8 @@ export default function FAQ() {
                   <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
                   <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
                   <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-                  <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
-                  <a href="tel:+15551234567">📞 (555) 123-4567</a>
+                  <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
+                  <button type="button" onClick={() => { window.location.href = '/'; }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
               </div>
       </header>
 
@@ -193,25 +192,59 @@ export default function FAQ() {
 
       <section className="section">
         <div className="container" style={{maxWidth: '900px'}}>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '80px'}}>
+          <h2 style={{marginBottom: '32px', textAlign: 'center', fontSize: '32px', color: '#00a0b8'}}>Frequently Asked Questions</h2>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '80px'}}>
             {faqs.map((faq, index) => (
               <div key={index} style={{
-                padding: '32px',
-                borderRadius: '16px',
-                background: 'rgba(255,255,255,0.6)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(224,251,255,0.4)'
+                borderRadius: '12px',
+                background: openFAQIndex === index ? 'rgba(224,251,255,0.3)' : 'rgba(255,255,255,0.6)',
+                border: '2px solid ' + (openFAQIndex === index ? '#00a0b8' : 'rgba(200,164,177,0.3)'),
+                overflow: 'hidden',
+                transition: 'all 0.3s ease'
               }}>
-                <h3 style={{
-                  marginBottom: '16px',
-                  fontSize: '20px',
-                  fontFamily: 'var(--font-fredoka), sans-serif'
-                }}>{faq.question}</h3>
-                <p style={{
-                  lineHeight: '1.8',
-                  fontSize: '16px',
-                  margin: 0
-                }}>{faq.answer}</p>
+                <button
+                  onClick={() => setOpenFAQIndex(openFAQIndex === index ? null : index)}
+                  style={{
+                    width: '100%',
+                    padding: '20px 24px',
+                    background: 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '16px',
+                    fontFamily: 'inherit'
+                  }}
+                >
+                  <h3 style={{
+                    margin: 0,
+                    fontSize: '18px',
+                    fontFamily: 'var(--font-fredoka), sans-serif',
+                    fontWeight: '600',
+                    color: openFAQIndex === index ? '#00a0b8' : '#173c50',
+                    flex: 1
+                  }}>{faq.question}</h3>
+                  <span style={{
+                    fontSize: '24px',
+                    color: '#00a0b8',
+                    transition: 'transform 0.3s ease',
+                    transform: openFAQIndex === index ? 'rotate(180deg)' : 'rotate(0deg)',
+                    flexShrink: 0
+                  }}>▼</span>
+                </button>
+                {openFAQIndex === index && (
+                  <div style={{
+                    padding: '0 24px 24px',
+                    lineHeight: '1.8',
+                    fontSize: '16px',
+                    color: '#173c50',
+                    animation: 'fadeIn 0.3s ease'
+                  }}>
+                    {faq.answer}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -222,7 +255,7 @@ export default function FAQ() {
         <div className="container" style={{textAlign: 'center', maxWidth: '800px'}}>
           <h2 style={{marginBottom: '16px'}}>Still have questions?</h2>
           <p style={{fontSize: '18px', lineHeight: '1.6', marginBottom: '32px'}}>We'd love to help! Contact us today and we'll make sure your child's mermaid party is truly unforgettable. 🧜‍♀️✨</p>
-          <button type="button" onClick={() => setContactOpen(true)} className="button" style={{
+          <a href="/contact" className="button" style={{
             display: 'inline-block',
             padding: '16px 32px',
             background: '#006b7d',
@@ -232,8 +265,9 @@ export default function FAQ() {
             fontWeight: 600,
             fontSize: '18px',
             border: 'none',
+            textDecoration: 'none',
             cursor: 'pointer'
-          }}>Get in Touch</button>
+          }}>Get in Touch</a>
         </div>
       </section>
 
