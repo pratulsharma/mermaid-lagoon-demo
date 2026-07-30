@@ -4,9 +4,34 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteSettings, applySettingsStyle } from '../lib/useSettings';
 
 const packages = [
-  { name: 'Mermaid Splash', price: 750, hours: 4, features: ['Inflatable lagoon', 'Water included', '10 mermaid tails', 'Setup & breakdown'] },
-  { name: 'Deluxe Mermaid Party', price: 900, hours: 5, popular: true, features: ['Lagoon + pirate ship', 'Coral decorations', '15 mermaid tails', 'Party music'] },
-  { name: 'Luxury Mermaid Experience', price: 1250, hours: 6, features: ['Full themed lagoon', 'Mermaid throne', 'Bubble machine', 'Photography area', '25 mermaid tails'] }
+  { 
+    name: 'Mermaid Splash', 
+    price: 750, 
+    hours: 4, 
+    features: ['3 Seashell chairs', '10 Mermaid tails'], 
+    image: '/images/lagoon-kids.png',
+    color: '#5eb9c7',
+    bgColor: 'rgba(94, 185, 199, 0.1)'
+  },
+  { 
+    name: 'Deluxe Mermaid Package', 
+    price: 900, 
+    hours: 6, 
+    popular: true, 
+    features: ['4 Seashell chairs', '15 Mermaid tails', 'Jewels'], 
+    image: '/images/lagoon-adventure.jpg',
+    color: '#d97b9f',
+    bgColor: 'rgba(217, 123, 159, 0.1)'
+  },
+  { 
+    name: 'Luxury Mermaid Experience', 
+    price: 1250, 
+    hours: 8, 
+    features: ['5 Seashell chairs', '20+ Mermaid tails', 'Jewels', 'Bubble machine'], 
+    image: '/images/mermaid-throne.png',
+    color: '#9b7ba8',
+    bgColor: 'rgba(155, 123, 168, 0.1)'
+  }
 ];
 
 const addOns = [
@@ -565,7 +590,109 @@ export default function Home() {
       {settings.sections.showPackages && (
       <section className="section packages-section" id="packages"><div className="container">
           <div className="section-heading centered"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', margin: '0 auto 16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">Choose your splash</p><h2>Choose Your Mermaid Adventure.</h2><p>Clear starting prices with optional enhancements.</p></div>
-        <div className="package-grid" style={{marginBottom: '80px'}}>{packages.map((item, index) => <article className={`package-card ${item.popular ? 'popular' : ''}`} key={item.name}>{item.popular && <div className="popular-label">Most popular</div>}<p className="package-kicker">{item.hours} hour experience</p><h3>{item.name}</h3><div className="price"><span>$</span>{item.price}</div><ul>{item.features.map((feature) => <li key={feature}>✓ {feature}</li>)}</ul><button type="button" onClick={() => { setSelectedPackage(index); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); }}>Select package</button></article>)}</div>
+        <div className="package-grid" style={{marginBottom: '80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px'}}>
+          {packages.map((item, index) => (
+            <article 
+              key={item.name}
+              style={{
+                position: 'relative',
+                background: `linear-gradient(135deg, ${item.bgColor} 0%, rgba(255,240,248,0.95) 100%)`,
+                borderRadius: '24px',
+                padding: '48px 32px',
+                border: `3px solid ${item.color}`,
+                boxShadow: `0 8px 32px ${item.color}40, inset 0 1px 0 rgba(255,255,255,0.5)`,
+                textAlign: 'center',
+                transition: 'transform 0.3s ease',
+                cursor: 'pointer',
+                overflow: 'visible'
+              }}
+              onClick={() => { setSelectedPackage(index); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0) scale(1)'}
+            >
+              {/* Decorative corner embellishments */}
+              <div style={{position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: `drop-shadow(0 2px 4px ${item.color}80)`}}>🐚</div>
+              <div style={{position: 'absolute', top: '24px', left: '16px', fontSize: '20px', opacity: 0.6}}>🪸</div>
+              <div style={{position: 'absolute', top: '24px', right: '16px', fontSize: '20px', opacity: 0.6}}>🪸</div>
+              
+              {/* Title */}
+              <h3 style={{
+                fontFamily: 'var(--font-fredoka)',
+                fontSize: '20px',
+                fontWeight: '700',
+                color: item.color,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                marginBottom: '24px',
+                marginTop: '8px'
+              }}>
+                {item.name}
+              </h3>
+              
+              {/* Circular image */}
+              <div style={{
+                width: '180px',
+                height: '180px',
+                margin: '0 auto 28px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: `4px solid ${item.color}`,
+                boxShadow: `0 8px 24px ${item.color}50, inset 0 2px 8px rgba(0,0,0,0.1)`,
+                background: 'white'
+              }}>
+                <img 
+                  src={item.image} 
+                  alt={item.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              </div>
+              
+              {/* Features list */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                marginBottom: '28px',
+                textAlign: 'left',
+                padding: '0 16px'
+              }}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', color: '#2d5a6b', fontWeight: '600'}}>
+                  <span style={{color: item.color, fontSize: '18px'}}>⏱️</span>
+                  <span>{item.hours} HOURS</span>
+                </div>
+                {item.features.map((feature, i) => (
+                  <div key={i} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', color: '#2d5a6b', fontWeight: '600'}}>
+                    <span style={{color: item.color, fontSize: '18px'}}>🐚</span>
+                    <span>{feature.toUpperCase()}</span>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Price badge */}
+              <div style={{
+                background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}dd 100%)`,
+                color: 'white',
+                padding: '16px 32px',
+                borderRadius: '50px',
+                fontSize: '36px',
+                fontWeight: '700',
+                fontFamily: 'var(--font-fredoka)',
+                boxShadow: `0 6px 20px ${item.color}60, inset 0 2px 0 rgba(255,255,255,0.3)`,
+                margin: '0 auto',
+                display: 'inline-block'
+              }}>
+                ${item.price.toLocaleString()}
+              </div>
+              
+              {/* Bottom decoration */}
+              <div style={{position: 'absolute', bottom: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '20px', opacity: 0.4}}>✨</div>
+            </article>
+          ))}
+        </div>
       </div></section>
       )}
 
