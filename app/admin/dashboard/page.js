@@ -2,362 +2,251 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-const DEFAULT_SETTINGS = {
-  brand: {
-    primaryColor: '#e96eaa',
-    secondaryColor: '#073d63',
-    accentColor: '#18b7bd',
-  },
-  typography: {
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-    h1Size: '48px',
-    h2Size: '36px',
-  },
-  content: {
-    heroTitle: 'Swim your dream. Become a mermaid.',
-    heroDescription: 'A premium inflatable lagoon, shimmering mermaid tails, immersive décor and effortless setup—delivered to backyards, schools, hotels and special events.',
-    companyName: 'Mermaidalay',
-  },
-  packages: [
-    { name: 'Mermaid Splash', price: 750, hours: 4 },
-    { name: 'Deluxe Mermaid Party', price: 900, hours: 5 },
-    { name: 'Luxury Mermaid Experience', price: 1250, hours: 6 },
-  ],
-  sections: {
-    showGallery: true,
-    showAbout: true,
-    showServiceAreas: true,
-    showPackages: true,
-    showReels: true,
-  },
-};
+import { auth } from '../../../lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAllBookings, updateBookingStatus } from '../../../lib/bookingService';
 
 export default function AdminDashboard() {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-  const [activeTab, setActiveTab] = useState('colors');
-  const [saved, setSaved] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [bookings, setBookings] = useState([]);
+  const [filter, setFilter] = useState('all'); // all, pending, confirmed, paid, completed
   const router = useRouter();
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (!auth) {
-      router.push('/admin/login');
-      return;
-    }
-    const stored = localStorage.getItem('mermaidSettings');
-    if (stored) {
-      setSettings(JSON.parse(stored));
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        loadBookings();
+      } else {
+        router.push('/admin/login');
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [router]);
 
-  const saveSettings = () => {
-    localStorage.setItem('mermaidSettings', JSON.stringify(settings));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  async function loadBookings() {
+    const data = await getAllBookings();
+    setBookings(data);
+  }
 
-  const resetSettings = () => {
-    if (confirm('Reset all settings to defaults?')) {
-      setSettings(DEFAULT_SETTINGS);
-      localStorage.removeItem('mermaidSettings');
+  async function handleStatusChange(bookingId, newStatus) {
+    const result = await updateBookingStatus(bookingId, newStatus);
+    if (result.success) {
+      loadBookings(); // Reload bookings
+    } else {
+      alert('Failed to update status: ' + result.error);
     }
-  };
+  }
 
-  const logout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/admin/login');
-  };
+  async function handleLogout() {
+    try {
+      await signOut(auth);
+      router.push('/admin/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }
 
-  const handleColorChange = (category, key, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [category]: {...prev[category], [key]: value}
-    }));
-  };
+  if (loading) {
+    return (
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh'}}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
-  const handleTextChange = (category, key, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [category]: {...prev[category], [key]: value}
-    }));
-  };
+  const filteredBookings = filter === 'all' 
+    ? bookings 
+    : bookings.filter(b => b.status === filter);
 
-  const handleToggleSection = (section) => {
-    setSettings(prev => ({
-      ...prev,
-      sections: {...prev.sections, [section]: !prev.sections[section]}
-    }));
+  const stats = {
+    total: bookings.length,
+    pending: bookings.filter(b => b.status === 'pending').length,
+    confirmed: bookings.filter(b => b.status === 'confirmed').length,
+    paid: bookings.filter(b => b.status === 'paid').length,
+    completed: bookings.filter(b => b.status === 'completed').length,
   };
 
   return (
-    <main style={{minHeight: '100vh', background: '#f5f7fa'}}>
-      <header style={{background: 'white', borderBottom: '1px solid #e0e0e0', padding: '20px', position: 'sticky', top: 0, zIndex: 100}}>
-        <div style={{maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <div>
-            <h1 style={{margin: 0, color: '#073d63', fontSize: '24px'}}>🧜‍♀️ Mermaidalay Admin</h1>
-            <p style={{margin: '4px 0 0 0', color: '#999', fontSize: '14px'}}>Website Configuration Dashboard</p>
+    <div style={{minHeight: '100vh', background: '#f5f5f5'}}>
+      {/* Header */}
+      <header style={{background: 'white', borderBottom: '1px solid #e0e0e0', padding: '16px 32px'}}>
+        <div style={{maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+            <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay" style={{width: '40px', height: '40px'}} />
+            <div>
+              <h1 style={{margin: 0, fontSize: '20px', fontWeight: 600}}>Admin Dashboard</h1>
+              <p style={{margin: 0, fontSize: '13px', color: '#666'}}>{user?.email}</p>
+            </div>
           </div>
-          <div style={{display: 'flex', gap: '12px'}}>
-            <a href="/" style={{padding: '8px 16px', background: '#f0f0f0', border: 'none', borderRadius: '6px', textDecoration: 'none', color: '#073d63', cursor: 'pointer', fontSize: '14px'}}>
-              View Site
+          <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+            <button 
+              onClick={loadBookings}
+              style={{padding: '8px 16px', border: '1px solid #ddd', borderRadius: '6px', background: 'white', cursor: 'pointer'}}
+            >
+              🔄 Refresh
+            </button>
+            <a 
+              href="/"
+              style={{padding: '8px 16px', border: '1px solid #ddd', borderRadius: '6px', background: 'white', textDecoration: 'none', color: '#333'}}
+            >
+              🏠 Home
             </a>
-            <button onClick={logout} style={{padding: '8px 16px', background: '#e96eaa', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px'}}>
+            <button 
+              onClick={handleLogout}
+              style={{padding: '8px 16px', border: '1px solid #ddd', borderRadius: '6px', background: 'white', cursor: 'pointer'}}
+            >
               Logout
             </button>
           </div>
         </div>
       </header>
 
-      <div style={{maxWidth: '1200px', margin: '0 auto', padding: '40px 20px'}}>
-        <div style={{display: 'grid', gridTemplateColumns: '240px 1fr', gap: '24px'}}>
-          {/* Sidebar */}
-          <nav style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-            {[
-              {id: 'colors', label: '🎨 Colors & Brand'},
-              {id: 'typography', label: '✏️ Typography'},
-              {id: 'content', label: '📝 Content'},
-              {id: 'packages', label: '💰 Packages'},
-              {id: 'images', label: '🖼️ Images'},
-              {id: 'sections', label: '📑 Sections'},
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: '12px 16px',
-                  background: activeTab === tab.id ? '#e96eaa' : '#f0f0f0',
-                  color: activeTab === tab.id ? 'white' : '#073d63',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  fontWeight: activeTab === tab.id ? '600' : '500',
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-
-          {/* Main Content */}
-          <div style={{background: 'white', borderRadius: '12px', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,.05)'}}>
-            {activeTab === 'colors' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>Brand Colors</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Customize your brand colors throughout the website</p>
-                <div style={{display: 'grid', gap: '24px'}}>
-                  {Object.entries(settings.brand).map(([key, value]) => (
-                    <div key={key} style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                      <label style={{flex: 1}}>
-                        <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', textTransform: 'capitalize'}}>
-                          {key.replace(/([A-Z])/g, ' $1')}
-                        </div>
-                        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
-                          <input
-                            type="color"
-                            value={value}
-                            onChange={(e) => handleColorChange('brand', key, e.target.value)}
-                            style={{width: '60px', height: '40px', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer'}}
-                          />
-                          <input
-                            type="text"
-                            value={value}
-                            onChange={(e) => handleColorChange('brand', key, e.target.value)}
-                            style={{flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '6px', fontFamily: 'monospace'}}
-                          />
-                        </div>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'typography' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>Typography</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Configure fonts and text sizes</p>
-                <div style={{display: 'grid', gap: '20px'}}>
-                  <div>
-                    <label style={{display: 'block'}}>
-                      <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px'}}>Font Family</div>
-                      <select
-                        value={settings.typography.fontFamily}
-                        onChange={(e) => handleTextChange('typography', 'fontFamily', e.target.value)}
-                        style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}
-                      >
-                        <option value="system-ui, -apple-system, sans-serif">System (Default)</option>
-                        <option value="'Georgia', serif">Georgia Serif</option>
-                        <option value="'Courier New', monospace">Courier New</option>
-                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-                      </select>
-                    </label>
-                  </div>
-                  {Object.entries(settings.typography).filter(([k]) => k !== 'fontFamily').map(([key, value]) => (
-                    <label key={key} style={{display: 'block'}}>
-                      <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', textTransform: 'capitalize'}}>
-                        {key.replace(/([A-Z])/g, ' $1')}
-                      </div>
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => handleTextChange('typography', key, e.target.value)}
-                        placeholder="e.g., 48px"
-                        style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'content' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>Content</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Edit website copy and text</p>
-                <div style={{display: 'grid', gap: '20px'}}>
-                  {Object.entries(settings.content).map(([key, value]) => (
-                    <label key={key} style={{display: 'block'}}>
-                      <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', textTransform: 'capitalize'}}>
-                        {key.replace(/([A-Z])/g, ' $1')}
-                      </div>
-                      {key === 'heroDescription' ? (
-                        <textarea
-                          value={value}
-                          onChange={(e) => handleTextChange('content', key, e.target.value)}
-                          style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px', minHeight: '100px', fontFamily: 'inherit'}}
-                        />
-                      ) : (
-                        <input
-                          type="text"
-                          value={value}
-                          onChange={(e) => handleTextChange('content', key, e.target.value)}
-                          style={{width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px'}}
-                        />
-                      )}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'packages' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>Package Pricing</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Edit your party packages and pricing</p>
-                <div style={{display: 'grid', gap: '24px'}}>
-                  {settings.packages.map((pkg, idx) => (
-                    <div key={idx} style={{padding: '20px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
-                      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px'}}>
-                        <label>
-                          <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', fontSize: '14px'}}>Package Name</div>
-                          <input
-                            type="text"
-                            value={pkg.name}
-                            onChange={(e) => {
-                              const newPkgs = [...settings.packages];
-                              newPkgs[idx].name = e.target.value;
-                              setSettings({...settings, packages: newPkgs});
-                            }}
-                            style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
-                          />
-                        </label>
-                        <label>
-                          <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', fontSize: '14px'}}>Price ($)</div>
-                          <input
-                            type="number"
-                            value={pkg.price}
-                            onChange={(e) => {
-                              const newPkgs = [...settings.packages];
-                              newPkgs[idx].price = parseInt(e.target.value) || 0;
-                              setSettings({...settings, packages: newPkgs});
-                            }}
-                            style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
-                          />
-                        </label>
-                        <label>
-                          <div style={{color: '#073d63', fontWeight: '600', marginBottom: '8px', fontSize: '14px'}}>Hours</div>
-                          <input
-                            type="number"
-                            value={pkg.hours}
-                            onChange={(e) => {
-                              const newPkgs = [...settings.packages];
-                              newPkgs[idx].hours = parseInt(e.target.value) || 0;
-                              setSettings({...settings, packages: newPkgs});
-                            }}
-                            style={{width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px'}}
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'images' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>🖼️ Image Management</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Manage hero images and media files</p>
-                <div style={{display: 'grid', gap: '24px'}}>
-                  <div style={{padding: '20px', background: '#f9f9f9', borderRadius: '8px', border: '2px dashed #ddd', textAlign: 'center'}}>
-                    <p style={{color: '#999', marginBottom: '16px'}}>📤 Hero Image Upload</p>
-                    <label style={{display: 'inline-block', padding: '12px 24px', background: '#e96eaa', color: 'white', borderRadius: '6px', cursor: 'pointer', fontWeight: '600'}}>
-                      Choose File
-                      <input type="file" accept="image/*" style={{display: 'none'}} onChange={(e) => console.log('Image upload:', e.target.files[0])} />
-                    </label>
-                    <p style={{color: '#999', fontSize: '12px', marginTop: '12px'}}>Max 5MB • PNG, JPG, GIF</p>
-                  </div>
-                  <div style={{padding: '16px', background: '#e8f4f8', borderRadius: '8px', border: '1px solid #c0e8f0'}}>
-                    <p style={{color: '#0a5568', fontWeight: '600', margin: '0 0 8px 0'}}>ℹ️ Image Management Pro Features</p>
-                    <ul style={{margin: 0, paddingLeft: '20px', color: '#0a5568', fontSize: '14px'}}>
-                      <li>Image cropping & resizing</li>
-                      <li>Background removal & filters</li>
-                      <li>Batch upload multiple images</li>
-                      <li>CDN optimization & compression</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'sections' && (
-              <div>
-                <h2 style={{color: '#073d63', marginTop: 0}}>Page Sections</h2>
-                <p style={{color: '#627984', marginBottom: '24px'}}>Show or hide sections on your website</p>
-                <div style={{display: 'grid', gap: '16px'}}>
-                  {Object.entries(settings.sections).map(([key, value]) => (
-                    <label key={key} style={{display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f9f9f9', borderRadius: '6px', cursor: 'pointer'}}>
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        onChange={() => handleToggleSection(key)}
-                        style={{width: '18px', height: '18px', cursor: 'pointer'}}
-                      />
-                      <span style={{color: '#073d63', fontWeight: '500', textTransform: 'capitalize'}}>
-                        {key.replace(/([A-Z])/g, ' $1').replace('show', '')}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div style={{marginTop: '32px', paddingTop: '32px', borderTop: '1px solid #e0e0e0', display: 'flex', gap: '12px'}}>
-              <button onClick={saveSettings} style={{padding: '12px 24px', background: '#e96eaa', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600'}}>
-                💾 Save Changes
-              </button>
-              <button onClick={resetSettings} style={{padding: '12px 24px', background: '#f0f0f0', color: '#073d63', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontWeight: '600'}}>
-                ↺ Reset to Defaults
-              </button>
-              {saved && <span style={{color: '#18b7bd', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px'}}>✓ Saved!</span>}
-            </div>
+      <main style={{maxWidth: '1400px', margin: '0 auto', padding: '32px'}}>
+        {/* Stats Cards */}
+        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '32px'}}>
+          <div style={{background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            <div style={{fontSize: '14px', color: '#666', marginBottom: '8px'}}>Total Bookings</div>
+            <div style={{fontSize: '32px', fontWeight: 'bold', color: '#00a0b8'}}>{stats.total}</div>
+          </div>
+          <div style={{background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            <div style={{fontSize: '14px', color: '#666', marginBottom: '8px'}}>Pending</div>
+            <div style={{fontSize: '32px', fontWeight: 'bold', color: '#ff9800'}}>{stats.pending}</div>
+          </div>
+          <div style={{background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            <div style={{fontSize: '14px', color: '#666', marginBottom: '8px'}}>Confirmed</div>
+            <div style={{fontSize: '32px', fontWeight: 'bold', color: '#2196f3'}}>{stats.confirmed}</div>
+          </div>
+          <div style={{background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            <div style={{fontSize: '14px', color: '#666', marginBottom: '8px'}}>Paid</div>
+            <div style={{fontSize: '32px', fontWeight: 'bold', color: '#4caf50'}}>{stats.paid}</div>
+          </div>
+          <div style={{background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+            <div style={{fontSize: '14px', color: '#666', marginBottom: '8px'}}>Completed</div>
+            <div style={{fontSize: '32px', fontWeight: 'bold', color: '#9c27b0'}}>{stats.completed}</div>
           </div>
         </div>
-      </div>
-    </main>
+
+        {/* Filters */}
+        <div style={{background: 'white', padding: '16px 24px', borderRadius: '12px', marginBottom: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap'}}>
+          {['all', 'pending', 'confirmed', 'paid', 'completed'].map(status => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '20px',
+                border: 'none',
+                background: filter === status ? '#00a0b8' : '#f0f0f0',
+                color: filter === status ? 'white' : '#333',
+                cursor: 'pointer',
+                fontWeight: 500,
+                textTransform: 'capitalize'
+              }}
+            >
+              {status} ({status === 'all' ? stats.total : stats[status]})
+            </button>
+          ))}
+        </div>
+
+        {/* Bookings Table */}
+        <div style={{background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+          {filteredBookings.length === 0 ? (
+            <div style={{padding: '60px 20px', textAlign: 'center', color: '#999'}}>
+              <div style={{fontSize: '48px', marginBottom: '16px'}}>📋</div>
+              <p>No bookings found</p>
+            </div>
+          ) : (
+            <div style={{overflowX: 'auto'}}>
+              <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <thead>
+                  <tr style={{background: '#f9f9f9', borderBottom: '2px solid #e0e0e0'}}>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Booking #</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Customer</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Event Date</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Time</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Package</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Total</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Status</th>
+                    <th style={{padding: '16px', textAlign: 'left', fontWeight: 600, fontSize: '14px'}}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBookings.map((booking) => (
+                    <tr key={booking.id} style={{borderBottom: '1px solid #f0f0f0'}}>
+                      <td style={{padding: '16px', fontSize: '13px', fontWeight: 600, color: '#00a0b8'}}>
+                        {booking.bookingNumber}
+                      </td>
+                      <td style={{padding: '16px'}}>
+                        <div style={{fontSize: '14px', fontWeight: 500}}>{booking.name}</div>
+                        <div style={{fontSize: '12px', color: '#666'}}>{booking.email}</div>
+                        {booking.phone && <div style={{fontSize: '12px', color: '#666'}}>{booking.phone}</div>}
+                      </td>
+                      <td style={{padding: '16px', fontSize: '14px'}}>
+                        {new Date(booking.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                      <td style={{padding: '16px', fontSize: '14px'}}>{booking.eventTime}</td>
+                      <td style={{padding: '16px'}}>
+                        <div style={{fontSize: '14px', fontWeight: 500}}>{booking.packageName}</div>
+                        {booking.addOns && booking.addOns.length > 0 && (
+                          <div style={{fontSize: '12px', color: '#666'}}>+{booking.addOns.length} add-on(s)</div>
+                        )}
+                      </td>
+                      <td style={{padding: '16px', fontSize: '16px', fontWeight: 600}}>
+                        ${booking.total?.toLocaleString()}
+                      </td>
+                      <td style={{padding: '16px'}}>
+                        <span style={{
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          background: 
+                            booking.status === 'pending' ? '#fff3e0' :
+                            booking.status === 'confirmed' ? '#e3f2fd' :
+                            booking.status === 'paid' ? '#e8f5e9' :
+                            booking.status === 'completed' ? '#f3e5f5' :
+                            '#f5f5f5',
+                          color:
+                            booking.status === 'pending' ? '#f57c00' :
+                            booking.status === 'confirmed' ? '#1976d2' :
+                            booking.status === 'paid' ? '#388e3c' :
+                            booking.status === 'completed' ? '#7b1fa2' :
+                            '#666'
+                        }}>
+                          {booking.status}
+                        </span>
+                      </td>
+                      <td style={{padding: '16px'}}>
+                        <select 
+                          value={booking.status}
+                          onChange={(e) => handleStatusChange(booking.id, e.target.value)}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            border: '1px solid #ddd',
+                            fontSize: '13px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="confirmed">Confirmed</option>
+                          <option value="paid">Paid</option>
+                          <option value="completed">Completed</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
