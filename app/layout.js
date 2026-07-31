@@ -1,4 +1,5 @@
 import { Baloo_2, Fredoka, Quicksand, Nunito_Sans } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 const baloo2 = Baloo_2({ 
@@ -37,7 +38,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${baloo2.variable} ${fredoka.variable} ${quicksand.variable} ${nunitoSans.variable}`}>
-      <body>{children}</body>
+      <head>
+        <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+      </head>
+      <body>
+        {children}
+        <Script src="https://assets.calendly.com/assets/external/widget.js" strategy="lazyOnload" />
+      </body>
     </html>
   );
 }

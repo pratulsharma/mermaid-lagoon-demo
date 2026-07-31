@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import BookingModal from '../../components/BookingModal';
 import Navbar from '../../components/Navbar';
 
-export default function Gallery() {
+export default function GalleryPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [bookingOpen, setBookingOpen] = useState(false);
 
@@ -30,7 +28,7 @@ export default function Gallery() {
 
   return (
     <main>
-      <Navbar currentPage="gallery" onBookNowClick={() => setBookingOpen(true)} />
+      <Navbar currentPage="gallery" />
 
       <section className="section" id="demo-videos">
         <div className="container">
@@ -176,7 +174,6 @@ export default function Gallery() {
         </div>
       )}
 
-      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
     </main>
   );
 }

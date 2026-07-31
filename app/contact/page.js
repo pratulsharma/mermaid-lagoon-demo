@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import BookingModal from '../../components/BookingModal';
 import Navbar from '../../components/Navbar';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [bookingOpen, setBookingOpen] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -27,7 +25,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <Navbar currentPage="contact" onBookNowClick={() => setBookingOpen(true)} />
+          <Navbar currentPage="contact" />
 
       <section className="section" style={{paddingTop: '120px'}}>
         <div className="container">
@@ -195,7 +193,6 @@ export default function ContactPage() {
         </div>
       </footer>
 
-          <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
     </>
   );
 }

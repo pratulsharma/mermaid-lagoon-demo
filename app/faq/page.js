@@ -94,7 +94,7 @@ export default function FAQ() {
 
   return (
     <main>
-      <Navbar currentPage="faq" onBookNowClick={() => setBookingOpen(true)} />
+      <Navbar currentPage="faq" />
 
       <section className="section">
         <div className="container">
@@ -325,7 +325,6 @@ export default function FAQ() {
         </div>
       )}
 
-      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
     </main>
   );
 }

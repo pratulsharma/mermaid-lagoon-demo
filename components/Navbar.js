@@ -2,18 +2,24 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-export default function Navbar({ currentPage = '', onBookNowClick }) {
+export default function Navbar({ currentPage = '' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchOpen, setSearchOpen] = useState(false);
 
-    // Search content data
+    // CALENDLY CONFIGURATION - Replace with your Calendly URL after signup
+    const calendlyUrl = 'https://calendly.com/your-username/mermaid-lagoon'; // ⬅️ UPDATE THIS
+
+    const handleBookNowClick = () => {
+        if (typeof window !== 'undefined' && window.Calendly) {
+            window.Calendly.initPopupWidget({ url: calendlyUrl });
+        }
+        setMobileMenuOpen(false);
+    };
     const searchableContent = useMemo(() => [
         { type: 'Package', title: 'Mermaid Splash', content: '4 hour experience, inflatable lagoon, water included, 10 mermaid tails, setup & breakdown', price: '$750', link: '/#packages' },
         { type: 'Package', title: 'Deluxe Mermaid Party', content: '5 hour experience, lagoon + pirate ship, coral decorations, 15 mermaid tails, party music', price: '$900', link: '/#packages' },
         { type: 'Package', title: 'Luxury Mermaid Experience', content: '6 hour experience, full themed lagoon, mermaid throne, bubble machine, photography area, 25 mermaid tails', price: '$1250', link: '/#packages' },
-        { type: 'Add-on', title: 'Photographer', content: 'Professional photographer to capture your magical moments', price: '$350', link: '/#booking' },
-        { type: 'Add-on', title: 'Makeup artist', content: 'Professional makeup artist for mermaid transformations', price: '$200', link: '/#booking' },
         { type: 'Add-on', title: 'Bubble machine', content: 'Add magical bubbles to your lagoon experience', price: '$75', link: '/#booking' },
         { type: 'FAQ', title: 'Pool Dimensions', content: 'Our lagoon is 15 feet × 15 feet (15ft × 15ft)', link: '/faq' },
         { type: 'FAQ', title: 'Water Safety', content: 'Water depth safety requirements: 12 inches for ages 3-5, 18 inches for ages 6-8, 24 inches for ages 9+', link: '/faq' },
@@ -51,13 +57,6 @@ export default function Navbar({ currentPage = '', onBookNowClick }) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [searchOpen]);
-
-  const handleBookNowClick = () => {
-    if (onBookNowClick) {
-      onBookNowClick();
-    }
-    setMobileMenuOpen(false);
-  };
 
   return (
     <header className="nav-wrap">
