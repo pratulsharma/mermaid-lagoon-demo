@@ -252,7 +252,7 @@ export default function FAQ() {
       </footer>
 
       {contactOpen && (
-        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact us" onClick={() => setContactOpen(false)}>
+        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact" onClick={() => setContactOpen(false)}>
           <div className="booking-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '600px', padding: '0', position: 'relative'}}>
             <div style={{padding: '40px 48px 32px', borderBottom: '1px solid rgba(0,107,125,0.1)'}}>
               <div>

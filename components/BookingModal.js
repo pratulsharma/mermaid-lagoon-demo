@@ -35,8 +35,6 @@ const packages = [
 ];
 
 const addOns = [
-  ['Photographer', 350],
-  ['Makeup artist', 200],
   ['Mermaid tail extra', 10],
   ['Bubble machine', 75],
   ['Jewels', 50],

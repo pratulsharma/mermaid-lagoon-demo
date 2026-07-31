@@ -34,7 +34,7 @@ export default function ContactPage() {
           <div className="section-heading centered">
             <img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', margin: '0 auto 16px', display: 'block', objectFit: 'contain'}} />
             <p className="eyebrow">Get in Touch</p>
-            <h1>Contact Us</h1>
+                      <h1>Contact</h1>
             <p>Have questions about our mermaid lagoon experiences? We'd love to hear from you!</p>
           </div>
 

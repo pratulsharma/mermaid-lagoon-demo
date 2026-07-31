@@ -35,8 +35,6 @@ const packages = [
 ];
 
 const addOns = [
-  ['Photographer', 350, 'https://example.com/photographer'],
-  ['Makeup artist', 200, 'https://example.com/makeup'],
   ['Mermaid tail extra', 10],
   ['Bubble machine', 75],
   ['Jewels', 50],
@@ -176,8 +174,6 @@ export default function Home() {
     { type: 'Package', title: 'Mermaid Splash', content: '4 hour experience, inflatable lagoon, water included, 10 mermaid tails, setup & breakdown', price: '$750', link: '#packages' },
     { type: 'Package', title: 'Deluxe Mermaid Party', content: '5 hour experience, lagoon + pirate ship, coral decorations, 15 mermaid tails, party music', price: '$900', link: '#packages' },
     { type: 'Package', title: 'Luxury Mermaid Experience', content: '6 hour experience, full themed lagoon, mermaid throne, bubble machine, photography area, 25 mermaid tails', price: '$1250', link: '#packages' },
-    { type: 'Add-on', title: 'Photographer', content: 'Professional photographer to capture your magical moments', price: '$350', link: '#booking' },
-    { type: 'Add-on', title: 'Makeup artist', content: 'Professional makeup artist for mermaid transformations', price: '$200', link: '#booking' },
     { type: 'Add-on', title: 'Bubble machine', content: 'Add magical bubbles to your lagoon experience', price: '$75', link: '#booking' },
     { type: 'FAQ', title: 'Pool Dimensions', content: 'Our lagoon is 15 feet × 15 feet (15ft × 15ft)', link: '/faq' },
     { type: 'FAQ', title: 'Water Safety', content: 'Water depth safety requirements: 12 inches for ages 3-5, 18 inches for ages 6-8, 24 inches for ages 9+', link: '/faq' },
@@ -560,7 +556,7 @@ export default function Home() {
           <a href="#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
           <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
           <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-          <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact Us</a>
+          <a href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
           <button type="button" onClick={() => { setBookingOpen(true); setMobileMenuOpen(false); }} className="button primary" style={{width: '100%', marginTop: '8px'}}>Book Now</button>
         </div>
       </header>
@@ -801,7 +797,7 @@ export default function Home() {
       </section></div>}
 
       {contactOpen && (
-        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact us" onClick={() => setContactOpen(false)}>
+        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact" onClick={() => setContactOpen(false)}>
           <div className="booking-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '600px', padding: '0', position: 'relative'}}>
             <div style={{padding: '40px 48px 32px', borderBottom: '1px solid rgba(0,107,125,0.1)'}}>
               <div>
