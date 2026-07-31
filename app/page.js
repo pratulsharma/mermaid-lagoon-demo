@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteSettings, applySettingsStyle } from '../lib/useSettings';
 import Navbar from '../components/Navbar';
+import BookingModal from '../components/BookingModal';
 
 const packages = [
   { 
@@ -114,9 +115,7 @@ export default function Home() {
   const [selectedPackage, setSelectedPackage] = useState(1);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [videoOpen, setVideoOpen] = useState(false);
-
-  // Calendly configuration
-  const calendlyUrl = 'https://calendly.com/your-username/mermaid-lagoon'; // ⬅️ UPDATE THIS
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   // Check if user has visited before (client-side only, after hydration)
   useEffect(() => {
@@ -142,16 +141,16 @@ export default function Home() {
     }
   }, [showSplash]);
 
-  // Check for #booking hash and open Calendly
+  // Check for #booking hash and open BookingModal
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash === '#booking' && window.Calendly) {
+    if (typeof window !== 'undefined' && window.location.hash === '#booking') {
       // Wait for splash to dismiss if showing
       const timer = setTimeout(() => {
-        window.Calendly.initPopupWidget({ url: calendlyUrl });
+        setBookingOpen(true);
       }, showSplash ? 3500 : 100);
       return () => clearTimeout(timer);
     }
-  }, [showSplash, calendlyUrl]);
+  }, [showSplash]);
 
   // Search content data
   const searchableContent = useMemo(() => [
@@ -204,11 +203,9 @@ export default function Home() {
   const total = useMemo(() => packages[selectedPackage].price + selectedAddOns.reduce((sum, index) => sum + addOns[index][1], 0), [selectedPackage, selectedAddOns]);
   const toggleAddOn = (index) => setSelectedAddOns((items) => items.includes(index) ? items.filter((item) => item !== index) : [...items, index]);
 
-  // Handle Book Now click - open Calendly
+  // Handle Book Now click - open Firebase booking modal
   const handleBookNowClick = () => {
-    if (typeof window !== 'undefined' && window.Calendly) {
-      window.Calendly.initPopupWidget({ url: calendlyUrl });
-    }
+    setBookingOpen(true);
   };
 
   const proceedToWaiver = () => {
@@ -293,7 +290,7 @@ export default function Home() {
           <button type="button" onClick={dismissSplash}>Enter the lagoon</button>
         </div>
       </div>}
-      <Navbar currentPage="home" />
+      <Navbar currentPage="home" onBookNowClick={handleBookNowClick} />
 
       <section className="hero" id="top">
         <div className="hero-bubbles" aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/><i/></div>
@@ -595,6 +592,12 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Firebase Booking Modal */}
+      <BookingModal 
+        isOpen={bookingOpen} 
+        onClose={() => setBookingOpen(false)} 
+      />
     </main>
   );
 }

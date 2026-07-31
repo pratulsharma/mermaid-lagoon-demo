@@ -2,17 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-export default function Navbar({ currentPage = '' }) {
+export default function Navbar({ currentPage = '', onBookNowClick }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchOpen, setSearchOpen] = useState(false);
 
-    // CALENDLY CONFIGURATION - Replace with your Calendly URL after signup
-    const calendlyUrl = 'https://calendly.com/your-username/mermaid-lagoon'; // ⬅️ UPDATE THIS
-
     const handleBookNowClick = () => {
-        if (typeof window !== 'undefined' && window.Calendly) {
-            window.Calendly.initPopupWidget({ url: calendlyUrl });
+        if (onBookNowClick) {
+            onBookNowClick(); // Call parent's book now handler
         }
         setMobileMenuOpen(false);
     };
