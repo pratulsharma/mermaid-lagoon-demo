@@ -152,49 +152,6 @@ export default function Home() {
     }
   }, [showSplash]);
 
-  // Search content data
-  const searchableContent = useMemo(() => [
-    { type: 'Package', title: 'Mermaid Splash', content: '4 hour experience, inflatable lagoon, water included, 10 mermaid tails, setup & breakdown', price: '$750', link: '#packages' },
-    { type: 'Package', title: 'Deluxe Mermaid Party', content: '5 hour experience, lagoon + pirate ship, coral decorations, 15 mermaid tails, party music', price: '$900', link: '#packages' },
-    { type: 'Package', title: 'Luxury Mermaid Experience', content: '6 hour experience, full themed lagoon, mermaid throne, bubble machine, photography area, 25 mermaid tails', price: '$1250', link: '#packages' },
-    { type: 'Add-on', title: 'Bubble machine', content: 'Add magical bubbles to your lagoon experience', price: '$75', link: '#booking' },
-    { type: 'FAQ', title: 'Pool Dimensions', content: 'Our lagoon is 15 feet × 15 feet (15ft × 15ft)', link: '/faq' },
-    { type: 'FAQ', title: 'Water Safety', content: 'Water depth safety requirements: 12 inches for ages 3-5, 18 inches for ages 6-8, 24 inches for ages 9+', link: '/faq' },
-    { type: 'FAQ', title: 'Extra Mermaid Tail', content: 'Additional mermaid tails available for $10 each', link: '/faq' },
-    { type: 'FAQ', title: 'Cancellation Policy', content: 'Cancellations 14+ days in advance forfeit 30% deposit. Within 7 days of event: no refund', link: '/faq' },
-    { type: 'Experience', title: 'Mermaid Lagoons Collections', content: 'Coral Cove (Active Now), Sirens Cove (Coming Soon), Atlantis (Coming Soon)', link: '#experience' },
-    { type: 'Experience', title: 'Mermaid transformation', content: 'Wearable tails, crowns, pearl jewelry, shells and imaginative role-play accessories', link: '#experience' },
-    { type: 'Location', title: 'Service Areas', content: 'San Jose, Sunnyvale, Mountain View, Cupertino, Los Altos and surrounding areas', link: '#service-areas' },
-  ], []);
-
-  // Filter search results
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const query = searchQuery.toLowerCase();
-    return searchableContent.filter(item =>
-      item.title.toLowerCase().includes(query) ||
-      item.content.toLowerCase().includes(query) ||
-      item.type.toLowerCase().includes(query)
-    ).slice(0, 8); // Limit to 8 results
-  }, [searchQuery, searchableContent]);
-
-  // Handle search input
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setSearchOpen(true);
-  };
-
-  // Close search when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (searchOpen && !e.target.closest('.search-container')) {
-        setSearchOpen(false);
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [searchOpen]);
-
   const dismissSplash = () => {
     setSplashLeaving(true);
     window.setTimeout(() => setShowSplash(false), 1300);
@@ -206,64 +163,6 @@ export default function Home() {
   // Handle Book Now click - open Firebase booking modal
   const handleBookNowClick = () => {
     setBookingOpen(true);
-  };
-
-  const proceedToWaiver = () => {
-    // Validate booking form fields
-    if (!bookingDetails.name || !bookingDetails.email || !bookingDetails.eventDate || !bookingDetails.eventTime || !bookingDetails.eventCity) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-    
-    // Validate date is not in the past
-    const selectedDate = new Date(bookingDetails.eventDate + 'T' + bookingDetails.eventTime);
-    const now = new Date();
-    if (selectedDate < now) {
-      alert('Please select a future date and time.');
-      return;
-    }
-    
-    // Pre-fill waiver with booking details
-    setWaiver({ ...waiver, name: bookingDetails.name, email: bookingDetails.email, eventDate: bookingDetails.eventDate });
-    setBookingStep('waiver');
-  };
-
-  const signWaiver = () => {
-    if (!waiver.name || !waiver.email || !waiver.eventDate || !waiver.agree || !signature) {
-      alert('Please complete all waiver fields and provide your signature');
-      return;
-    }
-    setWaiverSigned(true);
-    setBookingStep('payment');
-  };
-
-  const processPayment = () => {
-    if (!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode) {
-      alert('Please fill in all payment fields');
-      return;
-    }
-    // Simulate payment processing
-    setBookingStep('success');
-  };
-
-  const resetBooking = () => {
-    setBookingStep('form');
-    setSubmitted(false);
-    setWaiverSigned(false);
-    setSignature('');
-    setBookingDetails({ name: '', email: '', eventDate: '', eventCity: '' });
-    setPaymentInfo({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
-  };
-
-  const downloadReceipt = () => {
-    const text = `MERMAIDALAY ELECTRONIC WAIVER ACKNOWLEDGEMENT\n\nPrinted name: ${waiver.name}\nEmail: ${waiver.email}\nPhone: ${waiver.phone}\nEvent address: ${waiver.address}\nEvent date: ${waiver.eventDate}\nSigned date: ${waiver.signedDate}\nPhoto/video release: ${waiver.photoRelease}\n\nThe signer acknowledged the Mermaidalay Online Rental Agreement & Liability Waiver and supplied an electronic signature in the website demo.\n\nProduction note: connect this form to a secure database, timestamping service, email delivery, and audit log before accepting live customer signatures.`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `mermaidalay-waiver-${waiver.name.replace(/\s+/g, '-').toLowerCase() || 'signed'}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
 
   if (!settings) {
