@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
+import AvailabilityCalendar from './AvailabilityCalendar';
 
 const packages = [
   { 
@@ -117,7 +118,6 @@ export default function BookingModal({ isOpen, onClose }) {
   const [signature, setSignature] = useState('');
   const [waiver, setWaiver] = useState({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
 
-  const minDate = useMemo(() => new Date().toISOString().split('T')[0], []);
   const total = useMemo(() => packages[selectedPackage].price + selectedAddOns.reduce((sum, index) => sum + addOns[index][1], 0), [selectedPackage, selectedAddOns]);
   const toggleAddOn = (index) => setSelectedAddOns((items) => items.includes(index) ? items.filter((item) => item !== index) : [...items, index]);
 
@@ -173,10 +173,16 @@ export default function BookingModal({ isOpen, onClose }) {
           </div>
           <div className="booking-modal-content">
             <fieldset><legend>1. Choose your service area</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="modal-area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-            <fieldset><legend>2. Choose day</legend><div><input type="date" min={minDate} value={bookingDetails.eventDate} onChange={(e) => setBookingDetails({ ...bookingDetails, eventDate: e.target.value })} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
-            <fieldset><legend>3. Choose time</legend><div><input type="time" value={bookingDetails.eventTime} onChange={(e) => setBookingDetails({ ...bookingDetails, eventTime: e.target.value })} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
-            <fieldset><legend>4. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="modal-package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
-            <fieldset><legend>5. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" name={`modal-addon-${index}`} checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
+            <fieldset>
+              <legend>2. Choose date & time</legend>
+              <AvailabilityCalendar 
+                onSelectDateTime={(date, time) => setBookingDetails({ ...bookingDetails, eventDate: date, eventTime: time })}
+                selectedDate={bookingDetails.eventDate}
+                selectedTime={bookingDetails.eventTime}
+              />
+            </fieldset>
+            <fieldset><legend>3. Choose a package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="modal-package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
+            <fieldset><legend>4. Add extra magic</legend><div className="choice-list compact">{addOns.map(([name, price], index) => <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" name={`modal-addon-${index}`} checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}</strong><small>+${price}</small></span></label>)}</div></fieldset>
             <div className="contact-fields">
               <label>Name *<input type="text" placeholder="Your name" value={bookingDetails.name} onChange={(e) => setBookingDetails({ ...bookingDetails, name: e.target.value })} /></label>
               <label>Email *<input type="email" placeholder="you@example.com" value={bookingDetails.email} onChange={(e) => setBookingDetails({ ...bookingDetails, email: e.target.value })} /></label>
