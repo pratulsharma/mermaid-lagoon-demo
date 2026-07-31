@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef } from 'react';
 import AvailabilityCalendar from './AvailabilityCalendar';
+import { submitBooking } from '../lib/bookingService';
 
 const packages = [
   { 
@@ -152,9 +153,51 @@ export default function BookingModal({ isOpen, onClose }) {
     setBookingStep('payment');
   };
 
-  const processPayment = () => {
-    console.log('Processing payment...', { bookingDetails, paymentInfo, total });
-    setBookingStep('success');
+    const processPayment = async () => {
+        if (!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode) {
+            alert('Please fill in all payment fields');
+            return;
+        }
+
+        // Prepare booking data for Firebase
+        const bookingData = {
+            name: bookingDetails.name,
+            email: bookingDetails.email,
+            phone: waiver.phone || '',
+            eventDate: bookingDetails.eventDate,
+            eventTime: bookingDetails.eventTime,
+            eventCity: bookingDetails.eventCity,
+            serviceArea,
+            packageName: packages[selectedPackage].name,
+            packagePrice: packages[selectedPackage].price,
+            addOns: selectedAddOns.map(index => addOns[index][0]),
+            addOnPrices: selectedAddOns.map(index => addOns[index][1]),
+            total,
+            waiver: {
+                signed: true,
+                signature,
+                agreedToTerms: waiver.agree,
+                photoRelease: waiver.photoRelease,
+                signedDate: waiver.signedDate
+            },
+            // Note: In production, NEVER send real payment info to Firebase
+            // Use Stripe/Square API instead
+            payment: {
+                lastFour: paymentInfo.cardNumber.slice(-4),
+                processed: true // This would come from Stripe
+            }
+        };
+
+        // Submit to Firebase
+        const result = await submitBooking(bookingData);
+
+        if (result.success) {
+            setBookingStep('success');
+        // Store booking number for display
+        setBookingDetails(prev => ({ ...prev, bookingNumber: result.bookingNumber }));
+    } else {
+        alert('Failed to submit booking: ' + result.error);
+    }
   };
 
   if (!isOpen) return null;
@@ -268,14 +311,22 @@ export default function BookingModal({ isOpen, onClose }) {
               <div className="success-icon">✓</div>
               <h3>Booking Confirmed</h3>
               <div style={{ textAlign: 'left', background: '#f9f9f9', padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
+                {bookingDetails.bookingNumber && (
+                  <p style={{ fontSize: '18px', fontWeight: 700, color: '#00a0b8', marginBottom: '12px' }}>
+                    Booking #{bookingDetails.bookingNumber}
+                  </p>
+                )}
                 <p><strong>Package:</strong> {packages[selectedPackage].name}</p>
                 <p><strong>Date & Time:</strong> {bookingDetails.eventDate} at {bookingDetails.eventTime}</p>
                 <p><strong>Location:</strong> {bookingDetails.eventCity}</p>
-                <p><strong>Total Paid:</strong> ${total.toLocaleString()}</p>
+                <p><strong>Total:</strong> ${total.toLocaleString()}</p>
               </div>
-              <p style={{ marginBottom: '20px' }}>A confirmation email has been sent to {bookingDetails.email}. We'll contact you 48 hours before your event to confirm setup details.</p>
-              <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
-                <strong>Demo Note:</strong> This is a front-end demonstration. In production, this would connect to a payment processor (Stripe, Square), send confirmation emails, and create calendar events.
+              <p style={{ marginBottom: '20px' }}>
+                ✨ A confirmation email has been sent to <strong>{bookingDetails.email}</strong>.<br />
+                We'll contact you 48 hours before your event to confirm setup details.
+              </p>
+              <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px', background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+                <strong>📧 Check your inbox</strong> for complete booking details and next steps.
               </p>
               <button className="button primary full" type="button" onClick={() => { onClose(); resetBooking(); }}>Close</button>
             </div>

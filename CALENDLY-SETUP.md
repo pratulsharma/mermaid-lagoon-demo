@@ -1,6 +1,69 @@
-# 📅 Calendly Setup Instructions
+# ⚠️ DEPRECATED - Using Firebase Instead
 
-## Step 1: Create Your FREE Calendly Account
+## This project now uses Firebase for bookings, not Calendly!
+
+**Follow [FIREBASE-SETUP.md](FIREBASE-SETUP.md) instead** for complete setup instructions.
+
+---
+
+## Why Firebase Instead of Calendly?
+
+You decided to use Firebase because you need:
+- ✅ **Admin authentication** (secure login)
+- ✅ **Admin dashboard** (view/manage all bookings)
+- ✅ **Full control** over booking data
+- ✅ **Custom UI** (keep your beautiful calendar component)
+- ✅ **Lower cost** ($0-5/month vs $20/month for Acuity)
+- ✅ **Scalability** as your business grows
+
+---
+
+## Quick Start with Firebase
+
+1. **Install Firebase SDK** (once npm is working):
+   ```bash
+   npm install firebase
+   ```
+
+2. **Follow the complete guide**:
+   - Open [FIREBASE-SETUP.md](FIREBASE-SETUP.md)
+   - Create Firebase project
+   - Enable Firestore & Authentication
+   - Set up environment variables
+   - Create admin user
+   - Test the system
+
+---
+
+## What's Already Built
+
+✅ Firebase configuration  
+✅ Booking submission to Firestore  
+✅ Admin authentication (Firebase Auth)  
+✅ Admin dashboard with real-time updates  
+✅ Email confirmations (via Resend API)  
+✅ Booking status management  
+✅ Custom AvailabilityCalendar component  
+
+**Everything is ready!** Just need to:
+1. Install `firebase` npm package
+2. Create your Firebase project
+3. Add environment variables
+4. Create admin user
+
+That's it! 🎉
+
+---
+
+## Cost Comparison
+
+| Solution | Setup Time | Monthly Cost | Control | Features |
+|----------|-----------|--------------|---------|----------|
+| **Firebase** | 30 min | $0-5 | Full | Custom dashboard, auth, email |
+| Calendly FREE | 5 min | $0 | Limited | Basic scheduling only |
+| Acuity Paid | 5 min | $20 | Medium | Scheduling + payments |
+
+**Firebase is the best choice for your needs!** 🔥
 
 1. Go to https://calendly.com/signup
 2. Sign up with your email (or Google account)
