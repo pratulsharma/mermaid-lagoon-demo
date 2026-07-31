@@ -362,31 +362,6 @@ export default function Home() {
       </div></section>
       )}
 
-      <section className="section booking-section" id="booking"><div className="container booking-grid" style={{marginBottom: '80px'}}>
-        <div className="booking-copy"><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{ width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain' }} /><p className="eyebrow">Build your experience</p><h2>Personalize Your Party by adding more magic</h2><p>Select a package above and click below to start your booking. Our 3-step process includes package selection, liability waiver, and secure payment.</p><div className="estimate-card"><span>Estimated experience total</span><strong>${total.toLocaleString()}</strong><small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small></div><button type="button" className="button primary" onClick={handleBookNowClick}>Start Booking</button></div>
-        <div className="booking-form" style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', backgroundImage: 'url(/images/seep3.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', borderRadius: '16px' }}>
-          <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,240,248,0.3)', backdropFilter: 'blur(2px)', borderRadius: '16px' }}></div>
-          <div style={{position: 'relative', zIndex: 1}}>
-            <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#173c50', fontWeight: '700' }}>Quick Package Builder</h3>
-            <p style={{ fontSize: '14px', color: '#173c50', marginBottom: '20px', fontWeight: '600' }}>Preview your selection before booking</p>
-          </div>
-          <div style={{position: 'relative', zIndex: 1}}>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>1. Choose Location</legend><div className="choice-list"><label className={`choice ${serviceArea === 'san-jose' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'san-jose'} onChange={() => setServiceArea('san-jose')} /><span><strong>San Jose</strong><small>Core service area</small></span></label><label className={`choice ${serviceArea === 'sunnyvale' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'sunnyvale'} onChange={() => setServiceArea('sunnyvale')} /><span><strong>Sunnyvale</strong><small>Extended area</small></span></label><label className={`choice ${serviceArea === 'mountain-view' ? 'selected' : ''}`}><input type="radio" name="area" checked={serviceArea === 'mountain-view'} onChange={() => setServiceArea('mountain-view')} /><span><strong>Mountain View</strong><small>Extended area</small></span></label></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>2. Choose Day</legend><div><input type="date" min={minDate} value={previewDay} onChange={(e) => setPreviewDay(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>3. Choose Time</legend><div><input type="time" value={previewTime} onChange={(e) => setPreviewTime(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: '8px', border: '2px solid #c8a4b1', fontSize: '16px'}} /></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>4. Choose Lagoon</legend><div className="choice-list"><label className="choice selected"><input type="radio" name="lagoon" checked readOnly /><span><strong>Coral Cove</strong><small>Currently active</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Sirens Cove</strong><small>Coming soon</small></span></label><label className="choice" style={{opacity: 0.6}}><input type="radio" name="lagoon" disabled /><span><strong>Atlantis</strong><small>Coming soon</small></span></label></div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>5. Choose Package</legend><div className="choice-list">{packages.map((item, index) => <label className={`choice ${selectedPackage === index ? 'selected' : ''}`} key={item.name}><input type="radio" name="package" checked={selectedPackage === index} onChange={() => setSelectedPackage(index)} /><span><strong>{item.name}</strong><small>{item.hours} hours · ${item.price}</small></span></label>)}</div></fieldset>
-            <fieldset><legend style={{color: '#173c50', fontWeight: '700'}}>Add Extra Magic</legend><div className="choice-list compact">{addOns.map((item, index) => {
-              const name = item[0];
-              const price = item[1];
-              const link = item[2];
-              return <label className={`choice ${selectedAddOns.includes(index) ? 'selected' : ''}`} key={name}><input type="checkbox" checked={selectedAddOns.includes(index)} onChange={() => toggleAddOn(index)} /><span><strong>{name}{link ? ' 🔗' : ''}</strong><small>+${price}</small></span></label>;
-            })}</div></fieldset>
-            <button type="button" className="button primary full" onClick={handleBookNowClick}>Continue to Booking →</button>
-          </div>
-        </div>
-      </div></section>
-
       <section className="section tails-section"><div className="container tail-grid" style={{marginBottom: '80px'}}><div><img src="/images/mermaidalay-mermaid-emblem.png" alt="" style={{width: '60px', height: '60px', marginBottom: '16px', display: 'block', objectFit: 'contain'}} /><p className="eyebrow">Choose your shimmer</p><h2>Mermaid tails and treasures for every guest.</h2><p>Colorful tail options plus crowns, pearls, shell props and treasure accessories help every child create a distinct mermaid look.</p></div><img src="/images/tail-collection.png" alt="Colorful mermaid tail collection with crowns and pearl accessories" /></div></section>
 
       {settings.sections.showGallery && (
