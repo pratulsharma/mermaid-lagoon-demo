@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings, applySettingsStyle } from '../lib/useSettings';
 import Navbar from '../components/Navbar';
 import BookingModal from '../components/BookingModal';
@@ -42,71 +42,6 @@ const addOns = [
   ['Jewels', 50],
   ['Seashell throne', 50]
 ];
-
-function SignaturePad({ onChange }) {
-  const canvasRef = useRef(null);
-  const drawing = useRef(false);
-
-  const point = (event) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const touch = event.touches?.[0];
-    return {
-      x: ((touch?.clientX ?? event.clientX) - rect.left) * (canvas.width / rect.width),
-      y: ((touch?.clientY ?? event.clientY) - rect.top) * (canvas.height / rect.height)
-    };
-  };
-
-  const start = (event) => {
-    event.preventDefault();
-    drawing.current = true;
-    const ctx = canvasRef.current.getContext('2d');
-    const p = point(event);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  };
-
-  const move = (event) => {
-    if (!drawing.current) return;
-    event.preventDefault();
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const p = point(event);
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#173c50';
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    onChange(canvas.toDataURL('image/png'));
-  };
-
-  const stop = () => { drawing.current = false; };
-  const clear = () => {
-    const canvas = canvasRef.current;
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-    onChange('');
-  };
-
-  return (
-    <div>
-      <canvas
-        ref={canvasRef}
-        className="signature-canvas"
-        width="900"
-        height="220"
-        aria-label="Draw electronic signature"
-        onMouseDown={start}
-        onMouseMove={move}
-        onMouseUp={stop}
-        onMouseLeave={stop}
-        onTouchStart={start}
-        onTouchMove={move}
-        onTouchEnd={stop}
-      />
-      <button type="button" className="text-button" onClick={clear}>Clear signature</button>
-    </div>
-  );
-}
 
 export default function Home() {
   const { settings } = useSiteSettings();
@@ -382,90 +317,6 @@ export default function Home() {
 
 
       <footer><div className="container footer-grid"><div><div className="brand footer-brand brand-wordmark"><img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay" /></div><p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p></div><div><strong>Explore</strong><a href="#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div><div><strong>Legal</strong><a href="/privacy">Privacy Policy</a><a href="/terms">Terms & Conditions</a><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a></div></div><div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div></footer>
-
-      {waiverOpen && <div className="modal-backdrop" role="presentation"><section className="waiver-modal" role="dialog" aria-modal="true" aria-labelledby="waiver-title"><div className="modal-header"><div><p className="eyebrow">Online agreement</p><h2 id="waiver-title">Rental Agreement & Liability Waiver</h2></div><button className="close-button" type="button" onClick={() => setWaiverOpen(false)} aria-label="Close waiver">×</button></div>
-        <div className="waiver-note">This demo reproduces the uploaded Mermaidalay waiver. For live use, have California counsel review it and connect signatures to secure storage, timestamps, document versioning and an audit trail.</div>
-        <div className="waiver-fields"><label>Printed name *<input value={waiver.name} onChange={(e) => setWaiver({ ...waiver, name: e.target.value })} /></label><label>Phone<input value={waiver.phone} onChange={(e) => setWaiver({ ...waiver, phone: e.target.value })} /></label><label>Email *<input type="email" value={waiver.email} onChange={(e) => setWaiver({ ...waiver, email: e.target.value })} /></label><label>Event address<input value={waiver.address} onChange={(e) => setWaiver({ ...waiver, address: e.target.value })} /></label><label>Event date *<input type="date" value={waiver.eventDate} onChange={(e) => setWaiver({ ...waiver, eventDate: e.target.value })} /></label><label>Signature date<input type="date" value={waiver.signedDate} onChange={(e) => setWaiver({ ...waiver, signedDate: e.target.value })} /></label></div>
-        <div className="waiver-text"><h3>Agreement</h3><p>By signing this Agreement, I confirm that I am at least 18 years old and have the authority to rent this equipment. If children participate, I certify that I am their parent or legal guardian or have permission to sign on their behalf.</p><p>I understand that use of Mermaidalay's inflatable pools, mermaid tails, accessories and water activities involves inherent risks, including slips, falls, drowning, property damage, serious injury, permanent disability or death. I voluntarily assume all risks associated with use of the rental equipment.</p><ul><li>Adult supervision is required at all times.</li><li>Mermaidalay does not provide lifeguards or childcare.</li><li>All participants must follow posted safety rules.</li><li>No diving, rough play, climbing, glass containers, alcohol, smoking, pets or sharp objects.</li><li>Equipment may not be moved, altered or misused after installation.</li><li>Equipment may not be used during high winds, lightning or other unsafe weather.</li></ul><p>I accept the equipment in good condition and agree to return it in the same condition, excluding normal wear and tear. I am responsible for damage caused by negligence, misuse, pets, sharp objects, burns, vandalism or failure to follow safety rules.</p><p>To the fullest extent permitted by California law, I release and hold harmless Mermaidalay, its owners, employees, contractors, affiliates and agents from claims, injuries, damages, losses, costs or liabilities arising from use of the rental equipment, except those resulting from gross negligence or willful misconduct. I agree to indemnify and defend Mermaidalay against claims arising from my event or the actions of guests or participants. Mermaidalay may postpone or cancel a rental because of unsafe weather or hazardous site conditions.</p><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Open the original two-page PDF</a></div>
-        <fieldset className="photo-release"><legend>Optional photo & video release</legend><label><input type="radio" name="release" checked={waiver.photoRelease === 'yes'} onChange={() => setWaiver({ ...waiver, photoRelease: 'yes' })} /> Yes, I authorize promotional use.</label><label><input type="radio" name="release" checked={waiver.photoRelease === 'no'} onChange={() => setWaiver({ ...waiver, photoRelease: 'no' })} /> No, I do not authorize promotional use.</label></fieldset>
-        <label className="agree-row"><input type="checkbox" checked={waiver.agree} onChange={(e) => setWaiver({ ...waiver, agree: e.target.checked })} /><span>I have read, understood and agree to the Rental Agreement, Liability Waiver, Assumption of Risk and Release of Liability. I understand that my electronic signature has the same intended effect as a handwritten signature.</span></label>
-        <label className="signature-label">Electronic signature *</label><SignaturePad onChange={setSignature} />
-        <div className="modal-actions"><button className="button secondary" type="button" onClick={() => setWaiverOpen(false)}>Cancel</button><button className="button primary" type="button" disabled={!waiver.name || !waiver.email || !waiver.eventDate || !waiver.agree || !signature} onClick={signWaiver}>Accept and sign</button></div>
-      </section></div>}
-
-      {contactOpen && (
-        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact" onClick={() => setContactOpen(false)}>
-          <div className="booking-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '600px', padding: '0', position: 'relative'}}>
-            <div style={{padding: '40px 48px 32px', borderBottom: '1px solid rgba(0,107,125,0.1)'}}>
-              <div>
-                <p className="eyebrow" style={{margin: '0 0 12px', fontSize: '13px', letterSpacing: '0.05em', textTransform: 'uppercase', color: '#006b7d', opacity: 0.7}}>Get in Touch</p>
-                <h2 style={{margin: 0, fontFamily: 'var(--font-fredoka), sans-serif', fontSize: '28px', color: '#006b7d', fontWeight: 600}}>Contact Mermaidalay</h2>
-              </div>
-              <button className="close-button" type="button" onClick={() => setContactOpen(false)} aria-label="Close contact form" style={{position: 'absolute', top: '24px', right: '24px', background: 'none', border: 'none', fontSize: '32px', cursor: 'pointer', color: '#006b7d', opacity: 0.5, lineHeight: 1}}>×</button>
-            </div>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you! We\'ll be in touch soon.'); setContactOpen(false); }} style={{padding: '40px 48px'}}>
-              <div style={{display: 'flex', flexDirection: 'column', gap: '28px'}}>
-                <label style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                  <span style={{fontWeight: 600, fontSize: '15px'}}>Name *</span>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    style={{padding: '16px', borderRadius: '8px', border: '1px solid rgba(0,107,125,0.2)', fontSize: '16px'}}
-                  />
-                </label>
-                <label style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                  <span style={{fontWeight: 600, fontSize: '15px'}}>Email *</span>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    style={{padding: '16px', borderRadius: '8px', border: '1px solid rgba(0,107,125,0.2)', fontSize: '16px'}}
-                  />
-                </label>
-                <label style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                  <span style={{fontWeight: 600, fontSize: '15px'}}>Phone</span>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    style={{padding: '16px', borderRadius: '8px', border: '1px solid rgba(0,107,125,0.2)', fontSize: '16px'}}
-                  />
-                </label>
-                <label style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                  <span style={{fontWeight: 600, fontSize: '15px'}}>Message *</span>
-                  <textarea
-                    required
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    rows={5}
-                    style={{padding: '16px', borderRadius: '8px', border: '1px solid rgba(0,107,125,0.2)', fontSize: '16px', fontFamily: 'inherit', resize: 'vertical'}}
-                  />
-                </label>
-                <button type="submit" className="button" style={{
-                  padding: '16px 32px',
-                  background: '#006b7d',
-                  color: '#fff',
-                  borderRadius: '999px',
-                  fontFamily: 'var(--font-fredoka), sans-serif',
-                  fontWeight: 600,
-                  fontSize: '16px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  width: '100%',
-                  marginTop: '8px'
-                }}>Send Message</button>
-              </div>
-            </form>
-            <div style={{padding: '24px 48px 40px', textAlign: 'center', borderTop: '1px solid rgba(0,107,125,0.1)'}}>
-              <p style={{margin: '0 0 12px', fontSize: '15px', color: '#666'}}>Or call us directly:</p>
-              <a href="tel:+15551234567" style={{fontSize: '20px', fontWeight: 600, color: '#006b7d', textDecoration: 'none'}}>📞 (555) 123-4567</a>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Firebase Booking Modal */}
       <BookingModal 
