@@ -10,6 +10,8 @@ export default function Navbar({ currentPage = '', onBookNowClick }) {
     const handleBookNowClick = () => {
         if (onBookNowClick) {
             onBookNowClick(); // Call parent's book now handler
+      } else if (typeof window !== 'undefined') {
+        window.location.href = '/#booking';
         }
         setMobileMenuOpen(false);
     };

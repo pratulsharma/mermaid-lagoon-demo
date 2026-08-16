@@ -7,6 +7,7 @@ export default function GalleryPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -1,8 +1,13 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
+import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import { submitBooking } from '../lib/bookingService';
+
+const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 const packages = [
   { 
@@ -41,6 +46,181 @@ const addOns = [
   ['Jewels', 50],
   ['Seashell throne', 50]
 ];
+
+function StripePaymentForm({
+  bookingDetails,
+  selectedPackage,
+  selectedAddOns,
+  serviceArea,
+  total,
+  waiver,
+  signature,
+  onBack,
+  onSuccess,
+  onBookingNumber,
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [billingName, setBillingName] = useState(bookingDetails.name);
+  const [billingEmail, setBillingEmail] = useState(bookingDetails.email);
+  const [postalCode, setPostalCode] = useState('');
+
+  const createBookingRecord = (paymentIntent) => {
+    const card = paymentIntent.charges?.data?.[0]?.payment_method_details?.card;
+
+    return {
+      name: bookingDetails.name,
+      email: bookingDetails.email,
+      phone: waiver.phone || '',
+      eventDate: bookingDetails.eventDate,
+      eventTime: bookingDetails.eventTime,
+      eventCity: bookingDetails.eventCity,
+      serviceArea,
+      packageName: packages[selectedPackage].name,
+      packagePrice: packages[selectedPackage].price,
+      addOns: selectedAddOns.map((index) => addOns[index][0]),
+      addOnPrices: selectedAddOns.map((index) => addOns[index][1]),
+      total,
+      waiver: {
+        signed: true,
+        signature,
+        agreedToTerms: waiver.agree,
+        photoRelease: waiver.photoRelease,
+        signedDate: waiver.signedDate,
+      },
+      paymentStatus: 'paid',
+      payment: {
+        lastFour: card?.last4 || '',
+        brand: card?.brand || '',
+        processed: true,
+      },
+      stripePaymentIntentId: paymentIntent.id,
+    };
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      setError('Stripe is still loading. Please try again in a moment.');
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      setError('Card entry is not ready yet.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Math.round(total * 100),
+          currency: 'usd',
+          total,
+          booking: {
+            name: bookingDetails.name,
+            email: bookingDetails.email,
+            eventDate: bookingDetails.eventDate,
+            eventTime: bookingDetails.eventTime,
+            serviceArea,
+            packageName: packages[selectedPackage].name,
+          },
+        }),
+      });
+
+      const paymentIntentData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(paymentIntentData.error || 'Unable to start Stripe payment.');
+      }
+
+      const result = await stripe.confirmCardPayment(paymentIntentData.clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: billingName || bookingDetails.name,
+            email: billingEmail || bookingDetails.email,
+            address: postalCode ? { postal_code: postalCode } : undefined,
+          },
+        },
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message || 'Stripe payment failed.');
+      }
+
+      if (result.paymentIntent?.status !== 'succeeded') {
+        throw new Error(`Payment was not completed. Status: ${result.paymentIntent?.status || 'unknown'}`);
+      }
+
+      const bookingResult = await submitBooking(createBookingRecord(result.paymentIntent));
+
+      if (!bookingResult.success) {
+        throw new Error(bookingResult.error || 'Payment succeeded, but booking could not be saved.');
+      }
+
+      onBookingNumber(bookingResult.bookingNumber);
+      onSuccess();
+    } catch (submitError) {
+      setError(submitError.message || 'Could not complete payment.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="estimate-card" style={{ marginBottom: '24px' }}>
+        <span>Total Amount Due</span>
+        <strong>${total.toLocaleString()}</strong>
+        <small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small>
+      </div>
+      <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px', textAlign: 'center' }}>
+        Stripe test mode is enabled. Use the test card 4242 4242 4242 4242 with any future expiry, any CVC, and any ZIP.
+      </p>
+
+      <div style={{ display: 'grid', gap: '16px' }}>
+        <label>
+          Cardholder name *
+          <input type="text" value={billingName} onChange={(e) => setBillingName(e.target.value)} placeholder="Your name" />
+        </label>
+        <label>
+          Email *
+          <input type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} placeholder="you@example.com" />
+        </label>
+        <label>
+          Postal code *
+          <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="12345" />
+        </label>
+        <label>
+          Card details *
+          <div style={{ padding: '14px', border: '1px solid rgba(0, 0, 0, 0.15)', borderRadius: '12px', background: '#fff' }}>
+            <CardElement options={{ hidePostalCode: true }} />
+          </div>
+        </label>
+      </div>
+
+      {error && (
+        <p style={{ color: '#b42318', marginTop: '16px', marginBottom: 0, fontSize: '14px' }}>{error}</p>
+      )}
+
+      <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+        <button type="button" className="button secondary" onClick={onBack} disabled={loading}>Back</button>
+        <button type="submit" className="button primary" style={{ flex: 1 }} disabled={loading || !stripe || !elements}>
+          {loading ? 'Processing...' : 'Pay and Complete Booking'}
+        </button>
+      </div>
+    </form>
+  );
+}
 
 function SignaturePad({ onChange }) {
   const canvasRef = useRef(null);
@@ -113,7 +293,6 @@ export default function BookingModal({ isOpen, onClose }) {
   const [serviceArea, setServiceArea] = useState('san-jose');
   const [bookingStep, setBookingStep] = useState('form');
   const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventTime: '', eventCity: '' });
-  const [paymentInfo, setPaymentInfo] = useState({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
   const [signature, setSignature] = useState('');
   const [waiver, setWaiver] = useState({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
 
@@ -123,7 +302,6 @@ export default function BookingModal({ isOpen, onClose }) {
   const resetBooking = () => {
     setBookingStep('form');
     setBookingDetails({ name: '', email: '', eventDate: '', eventTime: '', eventCity: '' });
-    setPaymentInfo({ cardNumber: '', expiry: '', cvv: '', zipCode: '' });
     setSignature('');
     setWaiver({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
     setSelectedPackage(1);
@@ -151,53 +329,6 @@ export default function BookingModal({ isOpen, onClose }) {
       return;
     }
     setBookingStep('payment');
-  };
-
-    const processPayment = async () => {
-        if (!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode) {
-            alert('Please fill in all payment fields');
-            return;
-        }
-
-        // Prepare booking data for Firebase
-        const bookingData = {
-            name: bookingDetails.name,
-            email: bookingDetails.email,
-            phone: waiver.phone || '',
-            eventDate: bookingDetails.eventDate,
-            eventTime: bookingDetails.eventTime,
-            eventCity: bookingDetails.eventCity,
-            serviceArea,
-            packageName: packages[selectedPackage].name,
-            packagePrice: packages[selectedPackage].price,
-            addOns: selectedAddOns.map(index => addOns[index][0]),
-            addOnPrices: selectedAddOns.map(index => addOns[index][1]),
-            total,
-            waiver: {
-                signed: true,
-                signature,
-                agreedToTerms: waiver.agree,
-                photoRelease: waiver.photoRelease,
-                signedDate: waiver.signedDate
-            },
-            // Note: In production, NEVER send real payment info to Firebase
-            // Use Stripe/Square API instead
-            payment: {
-                lastFour: paymentInfo.cardNumber.slice(-4),
-                processed: true // This would come from Stripe
-            }
-        };
-
-        // Submit to Firebase
-        const result = await submitBooking(bookingData);
-
-        if (result.success) {
-            setBookingStep('success');
-        // Store booking number for display
-        setBookingDetails(prev => ({ ...prev, bookingNumber: result.bookingNumber }));
-    } else {
-        alert('Failed to submit booking: ' + result.error);
-    }
   };
 
   if (!isOpen) return null;
@@ -278,26 +409,26 @@ export default function BookingModal({ isOpen, onClose }) {
             <h2>Payment Information</h2>
           </div>
           <div className="booking-modal-content">
-            <div className="estimate-card" style={{ marginBottom: '24px' }}>
-              <span>Total Amount Due</span>
-              <strong>${total.toLocaleString()}</strong>
-              <small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small>
-            </div>
-            <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px', textAlign: 'center' }}>
-              <strong>Demo Mode:</strong> This is a demonstration payment form. No actual charges will be processed.
-            </p>
-            <div style={{ display: 'grid', gap: '16px' }}>
-              <label>Card Number *<input type="text" placeholder="1234 5678 9012 3456" maxLength="19" value={paymentInfo.cardNumber} onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })} /></label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                <label>Expiry *<input type="text" placeholder="MM/YY" maxLength="5" value={paymentInfo.expiry} onChange={(e) => setPaymentInfo({ ...paymentInfo, expiry: e.target.value })} /></label>
-                <label>CVV *<input type="text" placeholder="123" maxLength="4" value={paymentInfo.cvv} onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })} /></label>
-                <label>ZIP *<input type="text" placeholder="12345" maxLength="5" value={paymentInfo.zipCode} onChange={(e) => setPaymentInfo({ ...paymentInfo, zipCode: e.target.value })} /></label>
+            {stripePromise ? (
+              <Elements stripe={stripePromise}>
+                <StripePaymentForm
+                  bookingDetails={bookingDetails}
+                  selectedPackage={selectedPackage}
+                  selectedAddOns={selectedAddOns}
+                  serviceArea={serviceArea}
+                  total={total}
+                  waiver={waiver}
+                  signature={signature}
+                  onBack={() => setBookingStep('waiver')}
+                  onSuccess={() => setBookingStep('success')}
+                  onBookingNumber={(bookingNumber) => setBookingDetails((prev) => ({ ...prev, bookingNumber }))}
+                />
+              </Elements>
+            ) : (
+              <div style={{ padding: '16px', borderRadius: '12px', background: '#fff4f1', color: '#8a341f' }}>
+                Stripe is not configured yet. Add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and STRIPE_SECRET_KEY to enable test payments.
               </div>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button type="button" className="button secondary" onClick={() => setBookingStep('waiver')}>Back</button>
-              <button type="button" className="button primary" style={{ flex: 1 }} onClick={processPayment} disabled={!paymentInfo.cardNumber || !paymentInfo.expiry || !paymentInfo.cvv || !paymentInfo.zipCode}>Complete Booking</button>
-            </div>
+            )}
           </div>
         </>}
 

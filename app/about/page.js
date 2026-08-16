@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 
 export default function AboutPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
