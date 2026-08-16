@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Navbar from '../../components/Navbar';
 
-export default function Gallery() {
+export default function GalleryPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [contactOpen, setContactOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,43 +29,7 @@ export default function Gallery() {
 
   return (
     <main>
-      <header className="nav-wrap">
-        <nav className="nav container">
-          <a className="brand brand-wordmark" href="/#top" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-            <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-                      <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
-          </a>
-          <div className="nav-links">
-            <a href="/#top">Home</a>
-            <a href="/#packages">Packages</a>
-            <a href="/gallery">Gallery</a>
-            <a href="/#service-areas">Locations</a>
-            <a href="/about">About</a>
-            <a href="/faq">FAQ</a>
-          </div>
-          <div className="nav-contact">
-            <a href="tel:+15551234567" className="nav-phone">📞 (555) 123-4567</a>
-            <button type="button" onClick={() => setContactOpen(true)} className="nav-email" style={{background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', padding: 0}}>✉️ hello@mermaidalay.com</button>
-          </div>
-                  <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                  </button>
-        </nav>
-              <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-                  <a href="/#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
-                  <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-                  <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
-                  <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
-                  <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
-                  <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-                  <button type="button" onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}>Contact Us</button>
-                  <a href="tel:+15551234567">📞 (555) 123-4567</a>
-              </div>
-      </header>
-
-   
+      <Navbar currentPage="gallery" />
 
       <section className="section" id="demo-videos">
         <div className="container">
@@ -137,7 +102,7 @@ export default function Gallery() {
       )}
 
       {contactOpen && (
-        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact us" onClick={() => setContactOpen(false)}>
+        <div className="booking-modal-backdrop" role="dialog" aria-modal="true" aria-label="Contact" onClick={() => setContactOpen(false)}>
           <div className="booking-modal" onClick={(e) => e.stopPropagation()} style={{maxWidth: '600px', padding: '0', position: 'relative'}}>
             <div style={{padding: '40px 48px 32px', borderBottom: '1px solid rgba(0,107,125,0.1)'}}>
               <div>
@@ -209,6 +174,7 @@ export default function Gallery() {
           </div>
         </div>
       )}
+
     </main>
   );
 }

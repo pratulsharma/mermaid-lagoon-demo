@@ -1,36 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Navbar from '../../components/Navbar';
+import BookingModal from '../../components/BookingModal';
 
 export default function Privacy() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
     <main>
-      <header className="nav-wrap">
-        <nav className="nav container">
-          <a className="brand brand-wordmark" href="/" style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-            <img src="/images/mermaidalay-mermaid-emblem.png" alt="Mermaidalay Emblem" style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-            <img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay — Swim Your Dream" style={{ height: 'auto', width: 'auto', maxHeight: '36px' }} />
-          </a>
-          <div className="nav-links">
-            <a href="/#top">Home</a><a href="/#packages">Packages</a><a href="/gallery">Gallery</a><a href="/#service-areas">Locations</a><a href="/about">About</a><a href="/faq">FAQ</a>
-          </div>
-          <button className={`hamburger ${mobileMenuOpen ? 'open' : ''}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </nav>
-        <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-          <a href="/#top" onClick={() => setMobileMenuOpen(false)}>Home</a>
-          <a href="/#packages" onClick={() => setMobileMenuOpen(false)}>Packages</a>
-          <a href="/gallery" onClick={() => setMobileMenuOpen(false)}>Gallery</a>
-          <a href="/#service-areas" onClick={() => setMobileMenuOpen(false)}>Locations</a>
-          <a href="/about" onClick={() => setMobileMenuOpen(false)}>About</a>
-          <a href="/faq" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-        </div>
-      </header>
+      <Navbar currentPage="privacy" />
 
       <section className="hero simple-hero">
         <div className="container">
@@ -114,6 +93,7 @@ export default function Privacy() {
       </section>
 
       <footer><div className="container footer-grid"><div><div className="brand footer-brand brand-wordmark"><img src="/images/mermaidalay-wordmark.png" alt="Mermaidalay" /></div><p>Premium inflatable mermaid lagoon experiences for unforgettable parties and events.</p></div><div><strong>Explore</strong><a href="/#packages">Packages</a><a href="/gallery">Gallery</a><a href="/about">About</a><a href="/faq">FAQ</a></div><div><strong>Legal</strong><a href="/privacy">Privacy Policy</a><a href="/terms">Terms & Conditions</a><a href="/legal/mermaidalay-waiver.pdf" target="_blank" rel="noreferrer">Waiver PDF</a></div></div><div className="container footer-bottom">© 2026 Mermaidalay. Demo website.</div></footer>
+
     </main>
   );
 }
