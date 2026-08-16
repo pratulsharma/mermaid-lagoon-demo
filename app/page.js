@@ -78,7 +78,14 @@ export default function Home() {
 
   // Check for #booking hash and open BookingModal
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash === '#booking') {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    const shouldOpenBooking = url.hash === '#booking' || url.searchParams.get('booking') === '1';
+
+    if (shouldOpenBooking) {
       // Wait for splash to dismiss if showing
       const timer = setTimeout(() => {
         setBookingOpen(true);

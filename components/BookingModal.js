@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
-import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { PaymentElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import { submitBooking } from '../lib/bookingService';
@@ -65,7 +65,19 @@ function StripePaymentForm({
   const [error, setError] = useState('');
   const [billingName, setBillingName] = useState(bookingDetails.name);
   const [billingEmail, setBillingEmail] = useState(bookingDetails.email);
-  const [postalCode, setPostalCode] = useState('');
+  const paymentFieldLabelStyle = {
+    display: 'grid',
+    gap: '8px',
+    fontWeight: 600,
+    color: '#0f6d85',
+  };
+  const paymentInputStyle = {
+    width: '100%',
+    padding: '12px 14px',
+    border: '1px solid rgba(0, 0, 0, 0.22)',
+    borderRadius: '10px',
+    background: '#fff',
+  };
 
   const createBookingRecord = (paymentIntent) => {
     const card = paymentIntent.charges?.data?.[0]?.payment_method_details?.card;
@@ -108,49 +120,26 @@ function StripePaymentForm({
       return;
     }
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
-      setError('Card entry is not ready yet.');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Math.round(total * 100),
-          currency: 'usd',
-          total,
-          booking: {
-            name: bookingDetails.name,
-            email: bookingDetails.email,
-            eventDate: bookingDetails.eventDate,
-            eventTime: bookingDetails.eventTime,
-            serviceArea,
-            packageName: packages[selectedPackage].name,
-          },
-        }),
-      });
-
-      const paymentIntentData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(paymentIntentData.error || 'Unable to start Stripe payment.');
+      const elementSubmitResult = await elements.submit();
+      if (elementSubmitResult.error) {
+        throw new Error(elementSubmitResult.error.message || 'Please check your payment details.');
       }
 
-      const result = await stripe.confirmCardPayment(paymentIntentData.clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            name: billingName || bookingDetails.name,
-            email: billingEmail || bookingDetails.email,
-            address: postalCode ? { postal_code: postalCode } : undefined,
+      const result = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              name: billingName || bookingDetails.name,
+              email: billingEmail || bookingDetails.email,
+            },
           },
         },
+        redirect: 'if_required',
       });
 
       if (result.error) {
@@ -184,26 +173,34 @@ function StripePaymentForm({
         <small>{packages[selectedPackage].name} + {selectedAddOns.length} add-on{selectedAddOns.length === 1 ? '' : 's'}</small>
       </div>
       <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px', textAlign: 'center' }}>
-        Stripe test mode is enabled. Use the test card 4242 4242 4242 4242 with any future expiry, any CVC, and any ZIP.
+        Secure checkout powered by Stripe. In test mode, use card 4242 4242 4242 4242.
       </p>
 
       <div style={{ display: 'grid', gap: '16px' }}>
-        <label>
+        <label style={paymentFieldLabelStyle}>
           Cardholder name *
-          <input type="text" value={billingName} onChange={(e) => setBillingName(e.target.value)} placeholder="Your name" />
+          <input
+            type="text"
+            value={billingName}
+            onChange={(e) => setBillingName(e.target.value)}
+            placeholder="Your name"
+            style={paymentInputStyle}
+          />
         </label>
-        <label>
+        <label style={paymentFieldLabelStyle}>
           Email *
-          <input type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} placeholder="you@example.com" />
+          <input
+            type="email"
+            value={billingEmail}
+            onChange={(e) => setBillingEmail(e.target.value)}
+            placeholder="you@example.com"
+            style={paymentInputStyle}
+          />
         </label>
-        <label>
-          Postal code *
-          <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="12345" />
-        </label>
-        <label>
-          Card details *
+        <label style={paymentFieldLabelStyle}>
+          Payment details *
           <div style={{ padding: '14px', border: '1px solid rgba(0, 0, 0, 0.15)', borderRadius: '12px', background: '#fff' }}>
-            <CardElement options={{ hidePostalCode: true }} />
+            <PaymentElement />
           </div>
         </label>
       </div>
@@ -214,7 +211,7 @@ function StripePaymentForm({
 
       <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
         <button type="button" className="button secondary" onClick={onBack} disabled={loading}>Back</button>
-        <button type="submit" className="button primary" style={{ flex: 1 }} disabled={loading || !stripe || !elements}>
+        <button type="submit" className="button primary" style={{ flex: 1 }} disabled={loading || !stripe || !elements || !billingName || !billingEmail}>
           {loading ? 'Processing...' : 'Pay and Complete Booking'}
         </button>
       </div>
@@ -295,9 +292,96 @@ export default function BookingModal({ isOpen, onClose }) {
   const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', eventDate: '', eventTime: '', eventCity: '' });
   const [signature, setSignature] = useState('');
   const [waiver, setWaiver] = useState({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
+  const [paymentClientSecret, setPaymentClientSecret] = useState('');
+  const [paymentIntentLoading, setPaymentIntentLoading] = useState(false);
+  const [paymentIntentError, setPaymentIntentError] = useState('');
 
   const total = useMemo(() => packages[selectedPackage].price + selectedAddOns.reduce((sum, index) => sum + addOns[index][1], 0), [selectedPackage, selectedAddOns]);
   const toggleAddOn = (index) => setSelectedAddOns((items) => items.includes(index) ? items.filter((item) => item !== index) : [...items, index]);
+  const paymentElementOptions = useMemo(() => {
+    if (!paymentClientSecret) {
+      return undefined;
+    }
+
+    return {
+      clientSecret: paymentClientSecret,
+      appearance: {
+        theme: 'stripe',
+        variables: {
+          colorPrimary: '#b34a7f',
+          colorText: '#173c50',
+          borderRadius: '12px',
+        },
+      },
+    };
+  }, [paymentClientSecret]);
+
+  useEffect(() => {
+    if (bookingStep !== 'payment' || paymentClientSecret) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const initializePaymentIntent = async () => {
+      setPaymentIntentLoading(true);
+      setPaymentIntentError('');
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            amount: Math.round(total * 100),
+            currency: 'usd',
+            total,
+            booking: {
+              name: bookingDetails.name,
+              email: bookingDetails.email,
+              eventDate: bookingDetails.eventDate,
+              eventTime: bookingDetails.eventTime,
+              serviceArea,
+              packageName: packages[selectedPackage].name,
+            },
+          }),
+        });
+
+        clearTimeout(timeoutId);
+
+        const paymentIntentData = await response.json();
+
+        if (!response.ok || !paymentIntentData.clientSecret) {
+          throw new Error(paymentIntentData.error || 'Unable to start Stripe payment.');
+        }
+
+        if (!cancelled) {
+          setPaymentClientSecret(paymentIntentData.clientSecret);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          if (error.name === 'AbortError') {
+            setPaymentIntentError('Checkout initialization timed out. Please tap Retry.');
+          } else {
+            setPaymentIntentError(error.message || 'Unable to initialize secure checkout.');
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setPaymentIntentLoading(false);
+        }
+      }
+    };
+
+    initializePaymentIntent();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bookingStep, paymentClientSecret, total, bookingDetails.name, bookingDetails.email, bookingDetails.eventDate, bookingDetails.eventTime, serviceArea, selectedPackage]);
 
   const resetBooking = () => {
     setBookingStep('form');
@@ -306,6 +390,9 @@ export default function BookingModal({ isOpen, onClose }) {
     setWaiver({ name: '', phone: '', email: '', address: '', eventDate: '', photoRelease: 'no', agree: false, signedDate: new Date().toISOString().slice(0, 10) });
     setSelectedPackage(1);
     setSelectedAddOns([]);
+    setPaymentClientSecret('');
+    setPaymentIntentError('');
+    setPaymentIntentLoading(false);
   };
 
   const proceedToWaiver = () => {
@@ -328,6 +415,8 @@ export default function BookingModal({ isOpen, onClose }) {
       alert('Please sign the waiver and agree to the terms');
       return;
     }
+    setPaymentClientSecret('');
+    setPaymentIntentError('');
     setBookingStep('payment');
   };
 
@@ -410,20 +499,44 @@ export default function BookingModal({ isOpen, onClose }) {
           </div>
           <div className="booking-modal-content">
             {stripePromise ? (
-              <Elements stripe={stripePromise}>
-                <StripePaymentForm
-                  bookingDetails={bookingDetails}
-                  selectedPackage={selectedPackage}
-                  selectedAddOns={selectedAddOns}
-                  serviceArea={serviceArea}
-                  total={total}
-                  waiver={waiver}
-                  signature={signature}
-                  onBack={() => setBookingStep('waiver')}
-                  onSuccess={() => setBookingStep('success')}
-                  onBookingNumber={(bookingNumber) => setBookingDetails((prev) => ({ ...prev, bookingNumber }))}
-                />
-              </Elements>
+              paymentIntentLoading ? (
+                <div style={{ padding: '16px', borderRadius: '12px', background: '#f6fbff', color: '#173c50' }}>
+                  Preparing secure Stripe checkout...
+                </div>
+              ) : paymentIntentError ? (
+                <div style={{ display: 'grid', gap: '12px', padding: '16px', borderRadius: '12px', background: '#fff4f1', color: '#8a341f' }}>
+                  <span>{paymentIntentError}</span>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => {
+                      setPaymentClientSecret('');
+                      setPaymentIntentError('');
+                    }}
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : paymentElementOptions ? (
+                <Elements stripe={stripePromise} options={paymentElementOptions}>
+                  <StripePaymentForm
+                    bookingDetails={bookingDetails}
+                    selectedPackage={selectedPackage}
+                    selectedAddOns={selectedAddOns}
+                    serviceArea={serviceArea}
+                    total={total}
+                    waiver={waiver}
+                    signature={signature}
+                        onBack={() => {
+                          setPaymentClientSecret('');
+                          setPaymentIntentError('');
+                          setBookingStep('waiver');
+                        }}
+                        onSuccess={() => setBookingStep('success')}
+                        onBookingNumber={(bookingNumber) => setBookingDetails((prev) => ({ ...prev, bookingNumber }))}
+                      />
+                    </Elements>
+                  ) : null
             ) : (
               <div style={{ padding: '16px', borderRadius: '12px', background: '#fff4f1', color: '#8a341f' }}>
                 Stripe is not configured yet. Add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and STRIPE_SECRET_KEY to enable test payments.
